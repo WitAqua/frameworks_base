@@ -266,5 +266,6 @@ public class SystemSettingsValidators {
         VALIDATORS.put(System.WAKE_WHEN_PLUGGED_OR_UNPLUGGED, BOOLEAN_VALIDATOR);
         VALIDATORS.put(System.HIGH_TOUCH_POLLING_RATE_ENABLE, BOOLEAN_VALIDATOR);
         VALIDATORS.put(System.AUTO_BRIGHTNESS_ONE_SHOT, BOOLEAN_VALIDATOR);
+        VALIDATORS.put(System.STATUSBAR_CLOCK_POSITION, new InclusiveIntegerRangeValidator(0, 2));
     }
 }
