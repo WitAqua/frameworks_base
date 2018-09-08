@@ -273,6 +273,8 @@ public final class NotificationPanelViewController implements
     private static final String COUNTER_PANEL_OPEN_PEEK = "panel_open_peek";
     private static final String DOUBLE_TAP_SLEEP_GESTURE =
             "lineagesystem:" + LineageSettings.System.DOUBLE_TAP_SLEEP_GESTURE;
+    private static final String DOUBLE_TAP_SLEEP_LOCKSCREEN =
+            "system:" + Settings.System.DOUBLE_TAP_SLEEP_LOCKSCREEN;
     private static final String STATUS_BAR_CUSTOM_HEADER =
             "system:" + Settings.System.STATUS_BAR_CUSTOM_HEADER;
     private static final String STATUS_BAR_CUSTOM_HEADER_HEIGHT =
@@ -500,6 +502,8 @@ public final class NotificationPanelViewController implements
     private final int mDisplayId;
     private boolean mDoubleTapToSleepEnabled;
     private GestureDetector mDoubleTapGesture;
+
+    private boolean mIsLockscreenDoubleTapEnabled;
 
     private final KeyguardIndicationController mKeyguardIndicationController;
     private int mHeadsUpInset;
@@ -3740,6 +3744,7 @@ public final class NotificationPanelViewController implements
             mStatusBarHeaderMachine.updateEnablement();
 
             mTunerService.addTunable(this, DOUBLE_TAP_SLEEP_GESTURE);
+            mTunerService.addTunable(this, DOUBLE_TAP_SLEEP_LOCKSCREEN);
             mTunerService.addTunable(this, STATUS_BAR_CUSTOM_HEADER);
             mTunerService.addTunable(this, STATUS_BAR_CUSTOM_HEADER_HEIGHT);
             mTunerService.addTunable(this, STATUS_BAR_CUSTOM_HEADER_SHADOW);
@@ -3769,6 +3774,12 @@ public final class NotificationPanelViewController implements
             switch (key) {
                 case DOUBLE_TAP_SLEEP_GESTURE:
                     mDoubleTapToSleepEnabled =
+                            TunerService.parseIntegerSwitch(newValue,
+                                mResources.getBoolean(org.lineageos.platform.internal.R.bool.
+                                config_dt2sGestureEnabledByDefault));
+                    break;
+                case DOUBLE_TAP_SLEEP_LOCKSCREEN:
+                    mIsLockscreenDoubleTapEnabled =
                             TunerService.parseIntegerSwitch(newValue,
                                 mResources.getBoolean(org.lineageos.platform.internal.R.bool.
                                 config_dt2sGestureEnabledByDefault));
@@ -4140,7 +4151,10 @@ public final class NotificationPanelViewController implements
                 return false;
             }
 
-            if (mDoubleTapToSleepEnabled && !mPulsing && !mDozing) {
+            if ((mIsLockscreenDoubleTapEnabled && !mPulsing && !mDozing
+                    && mBarState == StatusBarState.KEYGUARD) ||
+                    (!mQsController.getExpanded() && mDoubleTapToSleepEnabled
+                    && event.getY() < mStatusBarHeaderHeightKeyguard)) {
                 mDoubleTapGesture.onTouchEvent(event);
             }
 
