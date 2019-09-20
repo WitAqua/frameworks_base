@@ -62,6 +62,7 @@ public class NavigationBarInflaterView extends FrameLayout implements TunerServi
     public static final String NAV_BAR_VIEWS = "sysui_nav_bar";
     public static final String NAV_BAR_LEFT = "sysui_nav_bar_left";
     public static final String NAV_BAR_RIGHT = "sysui_nav_bar_right";
+    public static final String NAV_BAR_INVERSE = "sysui_nav_bar_inverse";
 
     public static final String MENU_IME_ROTATE = "menu_ime";
     public static final String BACK = "back";
@@ -140,6 +141,7 @@ public class NavigationBarInflaterView extends FrameLayout implements TunerServi
 
     private boolean mIsHintDisabled;
     private boolean mIsKeyboardNavigationDisabled;
+    private boolean mInverseLayout;
 
     public NavigationBarInflaterView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -203,25 +205,35 @@ public class NavigationBarInflaterView extends FrameLayout implements TunerServi
         super.onAttachedToWindow();
         Dependency.get(TunerService.class).addTunable(this, KEY_NAVIGATION_HINT);
         Dependency.get(TunerService.class).addTunable(this, KEY_KEYBOARD_NO_NAVIGATION);
+        Dependency.get(TunerService.class).addTunable(this, NAV_BAR_INVERSE);
     }
 
     @Override
     protected void onDetachedFromWindow() {
         Dependency.get(NavigationModeController.class).removeListener(mListener);
+        Dependency.get(TunerService.class).removeTunable(this);
         super.onDetachedFromWindow();
     }
 
     @Override
     public void onTuningChanged(String key, String newValue) {
-        if (!KEY_NAVIGATION_HINT.equals(key) && !KEY_KEYBOARD_NO_NAVIGATION.equals(key))
-            return;
+        if (KEY_NAVIGATION_HINT.equals(key) || KEY_KEYBOARD_NO_NAVIGATION.equals(key)) {
+            mIsHintDisabled = TunerService.parseIntegerSwitch(
+                Settings.Secure.getString(mContentResolver, KEY_NAVIGATION_HINT), false);
+            mIsKeyboardNavigationDisabled = TunerService.parseIntegerSwitch(
+                Settings.Secure.getString(mContentResolver, KEY_KEYBOARD_NO_NAVIGATION), false);
+            updateHint();
+            onLikelyDefaultLayoutChange();
+        } else if (NAV_BAR_INVERSE.equals(key)) {
+            mInverseLayout = TunerService.parseIntegerSwitch(newValue, false);
+            updateLayoutInversion();
+        }
+    }
 
-        mIsHintDisabled = TunerService.parseIntegerSwitch(
-            Settings.Secure.getString(mContentResolver, KEY_NAVIGATION_HINT), false);
-        mIsKeyboardNavigationDisabled = TunerService.parseIntegerSwitch(
-            Settings.Secure.getString(mContentResolver, KEY_KEYBOARD_NO_NAVIGATION), false);
-        updateHint();
-        onLikelyDefaultLayoutChange();
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        updateLayoutInversion();
     }
 
     public void onLikelyDefaultLayoutChange() {
@@ -354,6 +366,19 @@ public class NavigationBarInflaterView extends FrameLayout implements TunerServi
                 true /* landscape */, false /* start */);
 
         updateButtonDispatchersCurrentView();
+    }
+
+    private void updateLayoutInversion() {
+        if (mInverseLayout) {
+            Configuration config = mContext.getResources().getConfiguration();
+            if (config.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL) {
+                setLayoutDirection(View.LAYOUT_DIRECTION_LTR);
+            } else {
+                setLayoutDirection(View.LAYOUT_DIRECTION_RTL);
+            }
+        } else {
+            setLayoutDirection(View.LAYOUT_DIRECTION_INHERIT);
+        }
     }
 
     private void addGravitySpacer(LinearLayout layout) {
