@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-     Copyright (C) 2024 WitAqua
+<!-- Copyright (C) 2014 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,19 +13,6 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-<resources>
-
-    <!-- Face unlock icon -->
-    <dimen name="face_unlock_icon_margin_top">6dp</dimen>
-
-    <!-- HD calling icon -->
-    <dimen name="signal_icon_viewport_size">24dp</dimen>
-
-    <!-- Weather -->  
-    <dimen name="weather_image_max_size">24dp</dimen>
-    <dimen name="weather_humidity_margin_start">16dp</dimen>
-
-    <!-- OmniStyle custom headers -->
-    <dimen name="qs_header_image_height">142dp</dimen>
-    <dimen name="qs_header_image_fade_size">80dp</dimen>
-</resources>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" >
+    <corners android:radius="1dp" android:topLeftRadius="0dp" android:topRightRadius="0dp" android:bottomLeftRadius="@*android:dimen/rounded_corner_radius" android:bottomRightRadius="@*android:dimen/rounded_corner_radius" />
+</shape>
