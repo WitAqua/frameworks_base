@@ -12894,6 +12894,12 @@ public final class Settings {
          */
         public static final String KEYBOARD_NO_NAVIGATION_BAR = "keyboard_no_navigation_bar";
 
+        /**
+         * Whether to use black theme for dark mode
+         * @hide
+         */
+        public static final String BERRY_BLACK_THEME = "berry_black_theme";
+
     }
 
     /**
