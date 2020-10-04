@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+     Copyright (C) 2026 The 2by2 Project
+     SPDX-License-Identifier: Apache-2.0
+-->
+<resources>
+
+    <!-- Statusbar Icons -->
+    <string name="status_bar_nfc">NFC</string>
+</resources>
