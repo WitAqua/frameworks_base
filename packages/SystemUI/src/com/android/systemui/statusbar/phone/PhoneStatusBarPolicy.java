@@ -33,6 +33,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.media.AudioManager;
+import android.nfc.NfcAdapter;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkCapabilities;
@@ -132,6 +133,7 @@ public class PhoneStatusBarPolicy
     private final String mSlotSensorsOff;
     private final String mSlotScreenRecord;
     private final String mSlotConnectedDisplay;
+    private final String mSlotNfc;
     private final String mSlotFirewall;
     private final int mDisplayId;
     private final SharedPreferences mSharedPreferences;
@@ -180,6 +182,7 @@ public class PhoneStatusBarPolicy
 
     private BluetoothController mBluetooth;
     private AlarmClockInfo mNextAlarm;
+    private NfcAdapter mAdapter;
 
     @Inject
     public PhoneStatusBarPolicy(Context context, StatusBarIconController iconController,
@@ -257,6 +260,7 @@ public class PhoneStatusBarPolicy
         mSlotSensorsOff = resources.getString(com.android.internal.R.string.status_bar_sensors_off);
         mSlotScreenRecord = resources.getString(
                 com.android.internal.R.string.status_bar_screen_record);
+        mSlotNfc = resources.getString(com.android.internal.R.string.status_bar_nfc);
         mSlotFirewall = resources.getString(R.string.status_bar_firewall_slot);
 
         mDisplayId = displayId;
@@ -277,6 +281,7 @@ public class PhoneStatusBarPolicy
         filter.addAction(Intent.ACTION_PROFILE_REMOVED);
         filter.addAction(Intent.ACTION_PROFILE_ACCESSIBLE);
         filter.addAction(Intent.ACTION_PROFILE_INACCESSIBLE);
+        filter.addAction(NfcAdapter.ACTION_ADAPTER_STATE_CHANGED);
         mBroadcastDispatcher.registerReceiverWithHandler(mIntentReceiver, filter, mHandler);
         Observer<Integer> observer = ringer -> mHandler.post(this::updateVolumeZen);
 
@@ -357,6 +362,12 @@ public class PhoneStatusBarPolicy
         // screen record
         mIconController.setIcon(mSlotScreenRecord, R.drawable.stat_sys_screen_record, null);
         mIconController.setIconVisibility(mSlotScreenRecord, false);
+
+        // nfc
+        mIconController.setIcon(mSlotNfc, R.drawable.stat_sys_nfc,
+                mResources.getString(R.string.status_bar_nfc));
+        mIconController.setIconVisibility(mSlotNfc, false);
+        updateNfc();
 
         // firewall
         mIconController.setIcon(mSlotFirewall, R.drawable.stat_sys_firewall, null);
@@ -845,6 +856,18 @@ public class PhoneStatusBarPolicy
         }
     }
 
+    private NfcAdapter getAdapter() {
+        if (mAdapter == null) {
+            mAdapter = NfcAdapter.getDefaultAdapter(mContext);
+        }
+        return mAdapter;
+    }
+
+    private void updateNfc() {
+        mIconController.setIconVisibility(mSlotNfc,
+                getAdapter() != null && getAdapter().isEnabled());
+    }
+
     private BroadcastReceiver mIntentReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -869,6 +892,9 @@ public class PhoneStatusBarPolicy
                     break;
                 case AudioManager.ACTION_HEADSET_PLUG:
                     updateHeadsetPlug(intent);
+                    break;
+                case NfcAdapter.ACTION_ADAPTER_STATE_CHANGED:
+                    updateNfc();
                     break;
             }
         }
