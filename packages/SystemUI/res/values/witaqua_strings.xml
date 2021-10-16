@@ -7,4 +7,10 @@
 
     <!-- Statusbar Icons -->
     <string name="status_bar_nfc">NFC</string>
+
+    <!-- Sound QS Tile -->
+    <string name="quick_settings_sound_label">Sound</string>
+    <string name="quick_settings_sound_ring">Ring</string>
+    <string name="quick_settings_sound_vibrate">Vibrate</string>
+    <string name="quick_settings_sound_silent">Silent</string>
 </resources>
