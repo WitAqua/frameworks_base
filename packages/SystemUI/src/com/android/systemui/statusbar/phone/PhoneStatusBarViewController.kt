@@ -256,12 +256,10 @@ private constructor(
 
     private fun addDarkReceivers() {
         darkIconDispatcher.addDarkReceiver(battery)
-        clockController.addDarkReceiver()
     }
 
     private fun removeDarkReceivers() {
         darkIconDispatcher.removeDarkReceiver(battery)
-        clockController.removeDarkReceiver()
     }
 
     inner class PhoneStatusBarViewTouchHandler : Gefingerpoken {
