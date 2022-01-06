@@ -39,4 +39,16 @@
     <java-symbol type="array" name="notification_light_package_mapping" />
     <!-- On-device lights (LED) capabilities -->
     <java-symbol type="integer" name="config_deviceLightCapabilities" />
+
+    <!-- Landscape Battery -->
+    <java-symbol type="string" name="config_batterymeterRLandPerimeterPath" />
+    <java-symbol type="string" name="config_batterymeterRLandFillMask" />
+    <java-symbol type="string" name="config_batterymeterRLandBoltPath" />
+    <java-symbol type="string" name="config_batterymeterRLandPowersavePath" />
+    <java-symbol type="string" name="config_batterymeterRLandErrorPerimeterPath" />
+    <java-symbol type="string" name="config_batterymeterLandPerimeterPath" />
+    <java-symbol type="string" name="config_batterymeterLandFillMask" />
+    <java-symbol type="string" name="config_batterymeterLandBoltPath" />
+    <java-symbol type="string" name="config_batterymeterLandPowersavePath" />
+    <java-symbol type="string" name="config_batterymeterLandErrorPerimeterPath" />
 </resources>
