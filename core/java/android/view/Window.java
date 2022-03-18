@@ -20,6 +20,7 @@ import static android.Manifest.permission.HIDE_NON_SYSTEM_OVERLAY_WINDOWS;
 import static android.Manifest.permission.HIDE_OVERLAY_WINDOWS;
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static android.view.WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED;
+import static android.view.WindowManager.LayoutParams.FLAG_SECURE;
 import static android.view.WindowManager.LayoutParams.SYSTEM_FLAG_HIDE_NON_SYSTEM_OVERLAY_WINDOWS;
 
 import android.annotation.ColorInt;
@@ -52,6 +53,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
+import android.provider.Settings;
 import android.transition.Scene;
 import android.transition.Transition;
 import android.transition.TransitionManager;
@@ -1380,6 +1382,10 @@ public abstract class Window {
      * @hide
      */
     protected void dispatchWindowAttributesChanged(WindowManager.LayoutParams attrs) {
+        if (Settings.Global.getInt(mContext.getContentResolver(),
+                Settings.Global.WINDOW_IGNORE_SECURE, 0) == 1) {
+            attrs.flags &= ~FLAG_SECURE;
+        }
         if (mCallback != null) {
             mCallback.onWindowAttributesChanged(attrs);
         }
