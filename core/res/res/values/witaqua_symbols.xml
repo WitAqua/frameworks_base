@@ -81,4 +81,7 @@
 
     <!-- KeyboxImitationHooks -->
     <java-symbol type="array" name="config_certifiedKeybox" />
+
+    <!-- Lock gesture -->
+    <java-symbol type="string" name="gesture_locked_warning" />
 </resources>
