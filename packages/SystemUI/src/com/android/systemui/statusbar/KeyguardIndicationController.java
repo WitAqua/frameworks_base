@@ -1057,10 +1057,13 @@ public class KeyguardIndicationController {
             mLockScreenIndicationView.setVisibility(View.GONE);
             mTopIndicationView.setVisibility(VISIBLE);
             CharSequence newIndication;
+            boolean setWakelock = false;
+
             if (!TextUtils.isEmpty(mBiometricMessage)) {
                 newIndication = mBiometricMessage; // note: doesn't show mBiometricMessageFollowUp
             } else if (!TextUtils.isEmpty(mTransientIndication)) {
                 newIndication = mTransientIndication;
+                setWakelock = true;
             } else if (!mBatteryPresent) {
                 // If there is no battery detected, hide the indication area and bail
                 mIndicationArea.setVisibility(GONE);
@@ -1074,14 +1077,16 @@ public class KeyguardIndicationController {
                 return;
             } else if (mPowerPluggedIn || mEnableBatteryDefender) {
                 newIndication = computePowerIndication();
+                setWakelock = animate;
             } else {
                 newIndication = NumberFormat.getPercentInstance()
                         .format(mBatteryLevel / 100f);
             }
 
             if (!TextUtils.equals(mTopIndicationView.getText(), newIndication)) {
-                mWakeLock.setAcquired(true);
-                mTopIndicationView.switchIndication(newIndication,
+                if (setWakelock) {
+                    mWakeLock.setAcquired(true);
+                    mTopIndicationView.switchIndication(newIndication,
                         new KeyguardIndication.Builder()
                                 .setMessage(newIndication)
                                 .setTextColor(ColorStateList.valueOf(
@@ -1090,6 +1095,16 @@ public class KeyguardIndicationController {
                                                 : Color.WHITE))
                                 .build(),
                         animate, () -> mWakeLock.setAcquired(false));
+                } else {
+                    mTopIndicationView.switchIndication(newIndication,
+                        new KeyguardIndication.Builder()
+                                .setMessage(newIndication)
+                                .setTextColor(ColorStateList.valueOf(
+                                        useMisalignmentColor
+                                                ? mContext.getColor(R.color.misalignment_text_color)
+                                                : Color.WHITE))
+                                .build(), animate, null /* onAnimationEndCallback */);
+                }
             }
             return;
         }
