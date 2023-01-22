@@ -71,4 +71,8 @@
 
     <!-- DataSwitch Tile -->
     <string name="qs_data_switch_label">Switch data card</string>
+
+    <!-- Language toggle tile -->
+    <string name="quick_settings_locale_label">Language</string>
+    <string name="quick_settings_locale_more_locales_toast">Configure multiple languages first</string>
 </resources>
