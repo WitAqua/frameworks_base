@@ -29,16 +29,22 @@ import com.android.systemui.R;
 
 public class StatusBarTuner extends PreferenceFragment {
     private static final String SHOW_FOURG = "show_fourg";
+    private static final String NETWORK_TRAFFIC = "network_traffic_settings";
 
     private SwitchPreference mShowFourG;
+    private SwitchPreference mNetMonitor;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
         mShowFourG = (SwitchPreference) findPreference(SHOW_FOURG);
+        mNetMonitor = (SwitchPreference) findPreference(NETWORK_TRAFFIC);
         mShowFourG.setChecked(Settings.System.getIntForUser(getActivity().getContentResolver(),
             Settings.System.SHOW_FOURG_ICON, 0,
+            UserHandle.USER_CURRENT) == 1);
+        mNetMonitor.setChecked(Settings.System.getIntForUser(getActivity().getContentResolver(),
+            Settings.System.NETWORK_TRAFFIC_STATE, 0,
             UserHandle.USER_CURRENT) == 1);
     }
 
@@ -74,6 +80,12 @@ public class StatusBarTuner extends PreferenceFragment {
             boolean checked = ((SwitchPreference)preference).isChecked();
             Settings.System.putIntForUser(getActivity().getContentResolver(),
                     Settings.System.SHOW_FOURG_ICON, checked ? 1 : 0,
+                    UserHandle.USER_CURRENT);
+            return true;
+        } else if (preference == mNetMonitor) {
+            boolean checked = ((SwitchPreference)preference).isChecked();
+            Settings.System.putIntForUser(getActivity().getContentResolver(),
+                    Settings.System.NETWORK_TRAFFIC_STATE, checked ? 1 : 0,
                     UserHandle.USER_CURRENT);
             return true;
         }

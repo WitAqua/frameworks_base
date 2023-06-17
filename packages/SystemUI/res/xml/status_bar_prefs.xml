@@ -111,6 +111,13 @@
         android:dependency="mobile"
         android:defaultValue="false" />
 
+    <SwitchPreference
+        android:key="network_traffic_settings"
+        android:title="@string/network_traffic_title"
+        android:summary="@string/network_traffic_summary"
+        android:icon="@drawable/ic_statusbar_network_monitor"
+        android:defaultValue="false" />
+
     <com.android.systemui.tuner.BatteryPreference
         android:title="@string/battery"
         android:icon="@*android:drawable/ic_battery"
