@@ -16,20 +16,30 @@
 package com.android.systemui.tuner;
 
 import android.os.Bundle;
-import android.view.MenuItem;
-
+import android.os.UserHandle;
+import androidx.preference.Preference;
 import androidx.preference.PreferenceFragment;
+import androidx.preference.SwitchPreference;
+import android.provider.Settings;
+import android.view.MenuItem;
 
 import com.android.internal.logging.MetricsLogger;
 import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
 import com.android.systemui.R;
 
 public class StatusBarTuner extends PreferenceFragment {
+    private static final String SHOW_FOURG = "show_fourg";
+
+    private SwitchPreference mShowFourG;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
+        mShowFourG = (SwitchPreference) findPreference(SHOW_FOURG);
+        mShowFourG.setChecked(Settings.System.getIntForUser(getActivity().getContentResolver(),
+            Settings.System.SHOW_FOURG_ICON, 0,
+            UserHandle.USER_CURRENT) == 1);
     }
 
     @Override
@@ -56,5 +66,17 @@ public class StatusBarTuner extends PreferenceFragment {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public boolean onPreferenceTreeClick(Preference preference) {
+        if (preference == mShowFourG) {
+            boolean checked = ((SwitchPreference)preference).isChecked();
+            Settings.System.putIntForUser(getActivity().getContentResolver(),
+                    Settings.System.SHOW_FOURG_ICON, checked ? 1 : 0,
+                    UserHandle.USER_CURRENT);
+            return true;
+        }
+        return super.onPreferenceTreeClick(preference);
     }
 }
