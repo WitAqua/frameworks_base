@@ -49,4 +49,7 @@
 
     <!-- Notification counter -->
     <string name="status_bar_notification_info_overflow" translatable="false">\u221E</string>
+
+    <!-- Text while recognizing face -->
+    <string name="face_unlock_recognizing">Recognizing face...</string>
 </resources>
