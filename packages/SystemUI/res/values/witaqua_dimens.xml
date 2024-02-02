@@ -74,6 +74,6 @@
     <dimen name="ongoing_action_icon_compact_size">16dp</dimen>
 
     <!-- Island notification -->
-    <dimen name="island_icon_size">36dp</dimen>
+    <dimen name="island_icon_size">48dp</dimen>
     <dimen name="island_side_margin">12dp</dimen>
 </resources>
