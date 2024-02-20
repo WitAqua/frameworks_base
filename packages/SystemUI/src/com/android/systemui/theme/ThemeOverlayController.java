@@ -159,7 +159,7 @@ public class ThemeOverlayController implements CoreStartable, Dumpable {
     // Theme variant: Vibrant, Tonal, Expressive, etc
     @VisibleForTesting
     @ThemeStyle.Type
-    protected int mThemeStyle = ThemeStyle.TONAL_SPOT;
+    protected int mThemeStyle = ThemeStyle.VIBRANT;
     // Accent colors overlay
     private FabricatedOverlay mAccentOverlay;
     // Neutral system colors overlay
@@ -920,11 +920,11 @@ public class ThemeOverlayController implements CoreStartable, Dumpable {
                 style = ThemeStyle.valueOf(
                         object.getString(OVERLAY_CATEGORY_THEME_STYLE));
                 if (!validStyles.contains(style)) {
-                    style = ThemeStyle.TONAL_SPOT;
+                    style = ThemeStyle.VIBRANT;
                 }
             } catch (JSONException | IllegalArgumentException e) {
                 Log.i(TAG, "Failed to parse THEME_CUSTOMIZATION_OVERLAY_PACKAGES.", e);
-                style = ThemeStyle.TONAL_SPOT;
+                style = ThemeStyle.VIBRANT;
             }
         }
         return style;
