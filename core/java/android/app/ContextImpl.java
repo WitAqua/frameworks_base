@@ -2732,8 +2732,10 @@ class ContextImpl extends Context {
      */
     private void warnIfCallingFromSystemProcess() {
         if (Process.myUid() == Process.SYSTEM_UID) {
-            Slog.w(TAG, "Calling a method in the system process without a qualified user: "
+           if (DEBUG) {
+	      Slog.w(TAG, "Calling a method in the system process without a qualified user: "
                     + Debug.getCallers(5));
+           }
         }
     }
 
