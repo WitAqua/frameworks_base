@@ -11842,6 +11842,12 @@ public final class Settings {
         public static final int VOLUME_HUSH_MUTE = 2;
 
         /**
+         * Flag to use "volume hush gesture" for execute screenshot.
+         * @hide
+         */
+        public static final String VOLUME_HUSH_GESTURE_AS_SCREENSHOT = "volume_hush_gesture_as_screenshot";
+
+        /**
          * The number of times (integer) the user has manually enabled battery saver.
          * @hide
          */
