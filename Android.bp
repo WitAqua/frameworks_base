@@ -138,6 +138,7 @@ filegroup {
         ":storaged_aidl",
         ":vold_aidl",
         ":deviceproductinfoconstants_aidl",
+        ":lmofreeform_aidl",
 
         ":adbrootservice_aidl",
 
