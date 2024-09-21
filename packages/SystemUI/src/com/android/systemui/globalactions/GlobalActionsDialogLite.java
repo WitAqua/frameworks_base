@@ -22,7 +22,6 @@ import static android.view.WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM;
 import static android.view.WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS;
 import static android.view.WindowManager.ScreenshotSource.SCREENSHOT_GLOBAL_ACTIONS;
 import static android.view.WindowManager.TAKE_SCREENSHOT_FULLSCREEN;
-import static android.view.WindowManager.TAKE_SCREENSHOT_SELECTED_REGION;
 import static android.view.WindowManagerPolicyConstants.NAV_BAR_MODE_2BUTTON;
 
 import static com.android.internal.widget.LockPatternUtils.StrongAuthTracker.SOME_AUTH_REQUIRED_AFTER_USER_REQUEST;
@@ -338,10 +337,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
         GA_CLOSE_TAP_OUTSIDE(810),
 
         @UiEvent(doc = "Power menu was closed via power + volume up.")
-        GA_CLOSE_POWER_VOLUP(811),
-
-        @UiEvent(doc = "System Update button was pressed.")
-        GA_SYSTEM_UPDATE_PRESS(1716);
+        GA_CLOSE_POWER_VOLUP(811);
 
         private final int mId;
 
@@ -705,8 +701,6 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
                 if (shouldDisplayEmergency()) {
                     addIfShouldShowAction(tempActions, new EmergencyDialerAction());
                 }
-            } else if (GLOBAL_ACTION_KEY_SYSTEM_UPDATE.equals(actionKey)) {
-                addIfShouldShowAction(tempActions, new SystemUpdateAction());
             } else {
                 Log.e(TAG, "Invalid global action key " + actionKey);
             }
@@ -1220,9 +1214,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
 
         @Override
         public boolean onLongPress() {
-            mScreenshotHelper.takeScreenshot(TAKE_SCREENSHOT_SELECTED_REGION, true, true,
-                    SCREENSHOT_GLOBAL_ACTIONS, mHandler, null);
-            return true;
+            return false;
         }
 
         @Override
@@ -1340,40 +1332,6 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
             mHandler.postDelayed(() -> {
                 mDevicePolicyManager.logoutUser();
             }, mDialogPressDelay);
-        }
-    }
-
-    @VisibleForTesting
-    final class SystemUpdateAction extends SinglePressAction {
-
-        SystemUpdateAction() {
-            super(com.android.settingslib.R.drawable.ic_system_update,
-                    com.android.settingslib.R.string.system_update_settings_list_item_title);
-        }
-
-        @Override
-        public void onPress() {
-            mUiEventLogger.log(GlobalActionsEvent.GA_SYSTEM_UPDATE_PRESS);
-            launchSystemUpdate();
-        }
-
-        @Override
-        public boolean showDuringKeyguard() {
-            return true;
-        }
-
-        @Override
-        public boolean showBeforeProvisioning() {
-            return false;
-        }
-
-        private void launchSystemUpdate() {
-            Intent intent = new Intent(Settings.ACTION_SYSTEM_UPDATE_SETTINGS);
-            intent.addFlags(
-                    Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-            // postStartActivityDismissingKeyguard is used for showing keyguard
-            // input/pin/password screen if lockscreen is secured, before sending the intent.
-            mActivityStarter.postStartActivityDismissingKeyguard(intent, 0);
         }
     }
 
