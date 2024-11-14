@@ -75,6 +75,8 @@ public final class CategoryKey {
     public static final String CATEGORY_SUPERVISION =
             "com.android.settings.category.ia.supervision";
 
+    public static final String CATEGORY_WITAQUA =
+            "com.android.settings.category.ia.witaqua";
     public static final Map<String, String> KEY_COMPAT_MAP;
 
     static {
