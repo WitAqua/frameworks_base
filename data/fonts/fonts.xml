@@ -1491,6 +1491,15 @@
         </font>
     </family>
     <family lang="ja">
+        <font weight="100" style="normal">../../product/fonts/Mejiro-Thin.ttf</font>
+        <font weight="300" style="normal">../../product/fonts/Mejiro-Light.ttf</font>
+        <font weight="400" style="normal">../../product/fonts/Mejiro-Regular.ttf</font>
+        <font weight="400" style="normal" fallbackFor="serif">NotoSerifCJKjp-Regular.ttc</font>
+        <font weight="600" style="normal">../../product/fonts/Mejiro-Semibold.ttf</font>
+        <font weight="700" style="normal">../../product/fonts/Mejiro-Bold.ttf</font>
+        <font weight="800" style="normal">../../product/fonts/Mejiro-Extrabold.ttf</font>
+    </family>
+    <family lang="ja">
         <font weight="100" style="normal" index="0" postScriptName="NotoSansCJKJP-Regular">
             NotoSansCJK-Regular.ttc
             <axis tag="wght" stylevalue="100"/>
