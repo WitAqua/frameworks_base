@@ -89,6 +89,7 @@ genrule {
         ":ComingSoon",
         ":CutiveMono",
         ":DancingScript",
+        ":mejiro",
         ":Roboto",
         ":RobotoFlex",
         ":SourceSansPro",
