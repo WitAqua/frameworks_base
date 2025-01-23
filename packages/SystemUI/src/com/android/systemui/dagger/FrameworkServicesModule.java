@@ -821,6 +821,7 @@ public class FrameworkServicesModule {
 
     @Provides
     @Singleton
+    @Nullable
     static ImsManager provideImsManager(Context context) {
         return context.getSystemService(ImsManager.class);
     }
