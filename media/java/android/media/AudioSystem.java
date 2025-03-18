@@ -247,6 +247,8 @@ public class AudioSystem
     public static final int AUDIO_FORMAT_LC3            = 0x2B000000;
     /** @hide */
     public static final int AUDIO_FORMAT_OPUS           = 0x08000000;
+    /** @hide */
+    public static final int AUDIO_FORMAT_LHDC           = 0x28000000;
 
 
     /** @hide */
@@ -340,6 +342,10 @@ public class AudioSystem
                 return AudioSystem.AUDIO_FORMAT_LC3;
             case BluetoothCodecConfig.SOURCE_CODEC_TYPE_OPUS:
                 return AudioSystem.AUDIO_FORMAT_OPUS;
+            case BluetoothCodecConfig.SOURCE_CODEC_TYPE_LHDCV3:
+                return AudioSystem.AUDIO_FORMAT_LHDC;
+            case BluetoothCodecConfig.SOURCE_CODEC_TYPE_LHDCV5:
+                return AudioSystem.AUDIO_FORMAT_LHDC;
             default:
                 Log.e(TAG, "Unknown A2DP BT codec 0x" + Integer.toHexString(btCodec)
                         + " for conversion to audio format");
