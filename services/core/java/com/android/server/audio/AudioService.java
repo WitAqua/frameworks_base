@@ -248,6 +248,7 @@ import com.android.internal.annotations.VisibleForTesting;
 import com.android.internal.os.SomeArgs;
 import com.android.internal.util.DumpUtils;
 import com.android.internal.util.Preconditions;
+import com.android.internal.util.ScreenshotHelper;
 import com.android.server.EventLogTags;
 import com.android.server.LocalManagerRegistry;
 import com.android.server.LocalServices;
@@ -295,6 +296,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -5897,8 +5899,15 @@ public class AudioService extends IAudioService.Stub
         int ringerMode = AudioManager.RINGER_MODE_SILENT;
         int toastText = 0;
 
+        final Handler mHandler;
+        final ScreenshotHelper mScreenshotHelper;
+
+        boolean isUseAsScreenShotEnabled = Settings.Secure.getInt(mContext.getContentResolver(),
+            Settings.Secure.VOLUME_HUSH_GESTURE_AS_SCREENSHOT, 0) != 0;
+
         int silenceRingerSetting = Settings.Secure.VOLUME_HUSH_OFF;
-        if (mContext.getResources()
+        if (!isUseAsScreenShotEnabled &&
+            mContext.getResources()
                 .getBoolean(com.android.internal.R.bool.config_volumeHushGestureEnabled)) {
             silenceRingerSetting = mSettings.getSecureIntForUser(mContentResolver,
                     Settings.Secure.VOLUME_HUSH_GESTURE, VOLUME_HUSH_OFF,
@@ -5917,9 +5926,16 @@ public class AudioService extends IAudioService.Stub
                 toastText = com.android.internal.R.string.volume_dialog_ringer_guidance_vibrate;
                 break;
         }
-        maybeVibrate(effect, reason);
-        setRingerModeInternal(ringerMode, reason);
-        Toast.makeText(mContext, toastText, Toast.LENGTH_SHORT).show();
+        if (isUseAsScreenShotEnabled) {
+            mHandler = new Handler(Looper.getMainLooper());
+            mScreenshotHelper = new ScreenshotHelper(mContext);
+            Consumer<Uri> onComplete = uri -> { };
+            mScreenshotHelper.takeScreenshot(1, mHandler, onComplete);
+        } else {
+            maybeVibrate(effect, reason);
+            setRingerModeInternal(ringerMode, reason);
+            Toast.makeText(mContext, toastText, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private boolean maybeVibrate(VibrationEffect effect, String reason) {
