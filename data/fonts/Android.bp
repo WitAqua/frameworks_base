@@ -93,6 +93,7 @@ genrule {
         ":Roboto",
         ":RobotoFlex",
         ":SourceSansPro",
+        ":witaqua-custom-font",  // WitAqua Additions
         ":noto-fonts",
     ],
     exclude_srcs: [
