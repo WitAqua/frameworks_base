@@ -1,0 +1,13 @@
+[
+    {
+        "lang": "ja",
+        "fonts": [
+            {
+                "file": "../../data/witaqua/fonts/custom-font.ttf",
+                "weight": "400",
+                "style": "normal"
+            }
+        ],
+        "priority": -50
+    }
+]

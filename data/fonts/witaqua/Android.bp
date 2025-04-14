@@ -1,0 +1,9 @@
+//
+//  Copyright (C) 2025 WitAqua
+//  SPDX-License-Identifier: Apache-2.0
+//
+
+filegroup {
+    name: "witaqua-custom-font",
+    srcs: ["font_config.json"],
+}
