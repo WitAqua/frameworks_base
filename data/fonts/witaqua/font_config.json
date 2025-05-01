@@ -9,5 +9,16 @@
             }
         ],
         "priority": -50
+    },
+    {
+        "lang": "und-Zsye",
+        "fonts": [
+            {
+                "file": "../../data/witaqua/fonts/custom-emoji.ttf",
+                "weight": "400",
+                "style": "normal"
+            }
+        ],
+        "priority": -50
     }
 ]
