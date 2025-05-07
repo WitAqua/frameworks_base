@@ -34,6 +34,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -56,9 +57,7 @@ constructor(
      * @see DevelopmentSettingRepository.isDevelopmentSettingEnabled
      */
     val buildNumber: Flow<BuildNumber?> =
-        userRepository.selectedUserInfo
-            .flatMapConcat { userInfo -> repository.isDevelopmentSettingEnabled(userInfo) }
-            .map { enabled -> buildText.takeIf { enabled } }
+        flowOf(null)
 
     private val buildText =
         BuildNumber(
