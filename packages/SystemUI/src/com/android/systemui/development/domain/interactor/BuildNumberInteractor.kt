@@ -38,6 +38,7 @@ import kotlinx.coroutines.flow.SharingStarted.Companion.WhileSubscribed
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.withContext
 
@@ -59,10 +60,7 @@ constructor(
      * @see DevelopmentSettingRepository.isDevelopmentSettingEnabled
      */
     val buildNumber: StateFlow<BuildNumber?> =
-        userRepository.selectedUserInfo
-            .flatMapConcat { userInfo -> repository.isDevelopmentSettingEnabled(userInfo) }
-            .map { enabled -> buildText.takeIf { enabled } }
-            .stateIn(applicationScope, WhileSubscribed(), null)
+        MutableStateFlow(null)
 
     private val buildText =
         BuildNumber(
