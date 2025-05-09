@@ -67,7 +67,7 @@ public final class AttestationService extends SystemService {
     public void onBootPhase(int phase) {
         if (Utils.isPackageInstalled(mContext, "com.google.android.gms")
                 && phase == PHASE_BOOT_COMPLETED) {
-            Log.i(TAG, "Scheduling the service");
+            Log.i(TAG, "Scheduling periodic fetch every " + INTERVAL + " hours");
             mScheduler.scheduleAtFixedRate(
                     mFetchRunnable, INITIAL_DELAY, INTERVAL, TimeUnit.HOURS);
         }
@@ -93,8 +93,7 @@ public final class AttestationService extends SystemService {
     private void writeToFile(File file, String data) {
         try (FileWriter writer = new FileWriter(file)) {
             writer.write(data);
-            // Set -rw-r--r-- (644) permission to make it readable by others.
-            file.setReadable(true, false);
+            file.setReadable(true, false); // Set -rw-r--r-- (644)
         } catch (IOException e) {
             Log.e(TAG, "Error writing to file", e);
         }
@@ -124,7 +123,7 @@ public final class AttestationService extends SystemService {
                 urlConnection.disconnect();
             }
         } catch (Exception e) {
-            Log.e(TAG, "Error making an API request", e);
+            Log.e(TAG, "Error making API request", e);
             return null;
         }
     }
@@ -137,8 +136,11 @@ public final class AttestationService extends SystemService {
         Network network = mConnectivityManager.getActiveNetwork();
         if (network != null) {
             NetworkCapabilities capabilities = mConnectivityManager.getNetworkCapabilities(network);
-            return capabilities != null && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+            boolean connected = capabilities != null && capabilities.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
+            dlog("isInternetConnected(): " + connected);
+            return connected;
         }
+        dlog("No active network");
         return false;
     }
 
@@ -146,10 +148,18 @@ public final class AttestationService extends SystemService {
         mConnectivityManager.registerDefaultNetworkCallback(new ConnectivityManager.NetworkCallback() {
             @Override
             public void onAvailable(Network network) {
-                Log.i(TAG, "Internet is available, resuming update");
+                Log.i(TAG, "Connectivity established");
+
                 if (mPendingUpdate) {
+                    Log.i(TAG, "Pending fetch detected. Executing now");
                     mScheduler.schedule(mFetchRunnable, 0, TimeUnit.SECONDS);
+                    mPendingUpdate = false;
                 }
+            }
+
+            @Override
+            public void onLost(Network network) {
+                Log.w(TAG, "Connectivity lost");
             }
         });
     }
@@ -157,25 +167,24 @@ public final class AttestationService extends SystemService {
     private class FetchGmsCertifiedProps implements Runnable {
         @Override
         public void run() {
-            mPendingUpdate = false;
-
             try {
                 dlog("FetchGmsCertifiedProps started");
 
                 if (!isInternetConnected()) {
-                    Log.e(TAG, "Internet is unavailable, deferring update");
-                    mPendingUpdate = true;
+                    if (!mPendingUpdate) {
+                        Log.w(TAG, "Internet unavailable, deferring update until network is restored");
+                        mPendingUpdate = true;
+                    }
                     return;
                 }
-                mPendingUpdate = false;
 
                 String savedProps = readFromFile(mDataFile);
                 String props = fetchProps();
 
                 if (props != null && !savedProps.equals(props)) {
-                    dlog("Found new props");
+                    dlog("Found new props, updating file");
                     writeToFile(mDataFile, props);
-                    dlog("FetchGmsCertifiedProps completed");
+                    dlog("Props updated successfully");
                 } else {
                     dlog("No change in props");
                 }
