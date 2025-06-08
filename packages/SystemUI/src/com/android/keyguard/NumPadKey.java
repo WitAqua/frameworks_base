@@ -41,8 +41,6 @@ import com.android.settingslib.Utils;
 import com.android.systemui.bouncer.ui.helper.BouncerHapticPlayer;
 import com.android.systemui.res.R;
 
-import lineageos.providers.LineageSettings;
-
 /**
  * Viewgroup for the bouncer numpad button, specifically for digits.
  */
@@ -123,7 +121,6 @@ public class NumPadKey extends ViewGroup implements NumPadAnimationListener {
         mKlondikeText = (TextView) findViewById(R.id.klondike_text);
 
         updateText();
-        setContentDescription(mDigitText.getText().toString());
 
         Drawable background = getBackground();
         if (background instanceof GradientDrawable) {
@@ -140,17 +137,16 @@ public class NumPadKey extends ViewGroup implements NumPadAnimationListener {
     }
 
     private void updateText() {
-        boolean scramblePin = (LineageSettings.System.getInt(getContext().getContentResolver(),
-                LineageSettings.System.LOCKSCREEN_PIN_SCRAMBLE_LAYOUT, 0) == 1);
         if (mDigit >= 0) {
             mDigitText.setText(Integer.toString(mDigit));
+            setContentDescription(mDigitText.getText().toString());
             if (sKlondike == null) {
                 sKlondike = getResources().getStringArray(R.array.lockscreen_num_pad_klondike);
             }
             if (sKlondike != null && sKlondike.length > mDigit) {
                 String klondike = sKlondike[mDigit];
                 final int len = klondike.length();
-                if (len > 0 || scramblePin) {
+                if (len > 0) {
                     mKlondikeText.setText(klondike);
                 } else if (mKlondikeText.getVisibility() != View.GONE) {
                     mKlondikeText.setVisibility(View.INVISIBLE);
