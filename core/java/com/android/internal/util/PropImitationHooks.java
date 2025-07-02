@@ -98,6 +98,9 @@ public class PropImitationHooks {
     private static final Boolean sDisableKeyAttestationBlock = SystemProperties.getBoolean(
         "persist.sys.pihooks.disable.gms_key_attestation_block", false);
 
+    private static final Boolean sEnableGooglePhotosSpoof = SystemProperties.getBoolean(
+            "persist.sys.pixelprops.gphotos", true);
+
     private static final Map<String, String> sPixelNineXLProps = Map.of(
             "PRODUCT", "komodo",
             "DEVICE", "komodo",
@@ -240,8 +243,10 @@ public class PropImitationHooks {
                 setProps(sPixelNineXLProps);
                 return;
             case PACKAGE_GPHOTOS:
-                dlog("Spoofing Pixel XL for Google Photos");
-                setProps(sPixelXLProps);
+                if(sEnableGooglePhotosSpoof) {
+                    dlog("Spoofing Pixel XL for Google Photos");
+                    setProps(sPixelXLProps);
+                }
                 return;
             case PACKAGE_NETFLIX:
                 if (!sNetflixModel.isEmpty()) {
