@@ -307,9 +307,10 @@ fun IconButton(
     modifier: Modifier = Modifier,
 ) {
     Expandable(
-        color = colorAttr(model.backgroundColor),
+        color = Color.Transparent,
         shape = CircleShape,
         onClick = model.onClick,
+        borderStroke = BorderStroke(1.dp, Color.White),
         modifier =
             modifier.borderOnFocus(
                 color = MaterialTheme.colorScheme.secondary,
@@ -317,7 +318,7 @@ fun IconButton(
             ),
         useModifierBasedImplementation = useModifierBasedExpandable,
     ) {
-        val tint = model.iconTint?.let { Color(it) } ?: Color.Unspecified
+        val tint = Color.White
         Icon(model.icon, tint = tint, modifier = Modifier.size(20.dp))
     }
 }
@@ -340,10 +341,11 @@ private fun NumberButton(
     val interactionSource = remember { MutableInteractionSource() }
 
     Expandable(
-        color = colorAttr(R.attr.shadeInactive),
+        color = Color.Transparent,
         shape = CircleShape,
         onClick = onClick,
         interactionSource = interactionSource,
+        borderStroke = BorderStroke(1.dp, Color.White),
         modifier =
             modifier.borderOnFocus(
                 color = MaterialTheme.colorScheme.secondary,
@@ -364,7 +366,7 @@ private fun NumberButton(
                             this.contentDescription = contentDescription
                         },
                     style = MaterialTheme.typography.bodyLarge,
-                    color = colorAttr(R.attr.onShadeInactiveVariant),
+                    color = Color.White,
                     // TODO(b/242040009): This should only use a standard text style instead and
                     // should not override the text size.
                     fontSize = 18.sp,
@@ -402,9 +404,9 @@ private fun TextButton(
 ) {
     Expandable(
         shape = CircleShape,
-        color = colorAttr(R.attr.underSurface),
+        color = Color.Transparent,
         contentColor = MaterialTheme.colorScheme.onSurfaceVariant,
-        borderStroke = BorderStroke(1.dp, colorAttr(R.attr.shadeInactive)),
+        borderStroke = BorderStroke(1.dp, Color.White),
         modifier =
             modifier
                 .padding(horizontal = 4.dp)
@@ -419,7 +421,7 @@ private fun TextButton(
             Icon(
                 icon,
                 Modifier.padding(end = 12.dp).size(20.dp),
-                colorAttr(R.attr.onShadeInactiveVariant),
+                Color.White,
             )
 
             Text(
@@ -432,7 +434,7 @@ private fun TextButton(
                         MaterialTheme.typography.bodyMedium
                     },
                 letterSpacing = if (QsInCompose.isEnabled) 0.em else 0.01.em,
-                color = colorAttr(R.attr.onShadeInactiveVariant),
+                color = Color.White,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -446,7 +448,7 @@ private fun TextButton(
                     painterResource(com.android.internal.R.drawable.ic_chevron_end),
                     contentDescription = null,
                     Modifier.padding(start = 8.dp).size(20.dp),
-                    colorAttr(R.attr.onShadeInactiveVariant),
+                    Color.White,
                 )
             }
         }
