@@ -98,6 +98,16 @@
         <!-- Optional link to app. Only appears if the channel is not disabled and the app
         asked for it -->
         <ImageButton
+            android:id="@+id/force_stop"
+            android:layout_width="@dimen/notification_2025_guts_button_size"
+            android:layout_height="@dimen/notification_2025_guts_button_size"
+            android:background="@drawable/ripple_drawable_20dp"
+            android:contentDescription="@string/notification_app_settings"
+            android:src="@drawable/ic_force_stop"
+            android:layout_toStartOf="@id/app_settings"
+            android:paddingTop="@*android:dimen/notification_2025_margin"
+            android:tint="@androidprv:color/materialColorPrimary"/>
+        <ImageButton
             android:id="@+id/app_settings"
             android:layout_width="@dimen/notification_2025_guts_button_size"
             android:layout_height="@dimen/notification_2025_guts_button_size"
