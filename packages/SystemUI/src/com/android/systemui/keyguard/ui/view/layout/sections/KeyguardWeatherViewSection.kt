@@ -34,31 +34,27 @@ class KeyguardWeatherViewSection
 @Inject
 constructor(
     private val context: Context,
+    val layoutInflater: LayoutInflater,
     val smartspaceController: LockscreenSmartspaceController,
-    // Add LayoutInflater to the constructor
-    private val layoutInflater: LayoutInflater,
 ) : KeyguardSection() {
-
-    private var weatherArea: WeatherInfoView? = null
+    private lateinit var weatherView: WeatherInfoView
 
     override fun addViews(constraintLayout: ConstraintLayout) {
-        if (!smartspaceController.isCustomWeatherEnabled) return
-        // Inflate the view here instead of finding it
-        weatherArea = layoutInflater.inflate(R.layout.keyguard_weather_area, constraintLayout, false)
-            as WeatherInfoView
+        if (!smartspaceController.isOmniWeatherEnabled) return
 
-        constraintLayout.addView(weatherArea)
-        weatherArea?.init()
+        weatherView =
+            layoutInflater.inflate(R.layout.keyguard_weather_area, null, false) as WeatherInfoView
+        constraintLayout.addView(weatherView)
     }
 
     override fun bindData(constraintLayout: ConstraintLayout) {
-        // Data binding logic can go here if needed, but your init() call in addViews is fine.
+        if (!smartspaceController.isOmniWeatherEnabled) return
+
+        weatherView.init()
     }
 
     override fun applyConstraints(constraintSet: ConstraintSet) {
-        // Your existing constraint logic is correct and should work without changes.
-        // It positions the weather view below the slice view.
-        if (!smartspaceController.isCustomWeatherEnabled) return
+        if (!smartspaceController.isOmniWeatherEnabled) return
 
         constraintSet.apply {
             connect(
@@ -99,10 +95,11 @@ constructor(
     }
 
     override fun removeViews(constraintLayout: ConstraintLayout) {
-        // Clean up the view and controller
-        if (smartspaceController.isCustomWeatherEnabled) return
-        constraintLayout.removeView(weatherArea)
-        weatherArea?.cleanup()
-        weatherArea = null
+        if (!smartspaceController.isOmniWeatherEnabled) return
+
+        constraintLayout.findViewById<WeatherInfoView?>(R.id.keyguard_weather_area)?.let { weatherArea ->
+            weatherArea.cleanup()
+            constraintLayout.removeView(weatherArea)
+        }
     }
 }
