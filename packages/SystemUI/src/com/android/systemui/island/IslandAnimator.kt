@@ -17,7 +17,7 @@ import android.view.animation.Interpolator
 class IslandAnimator(private val view: View) {
 
     companion object {
-        const val ANIMATION_DURATION = 600L
+        const val ANIMATION_DURATION = 500L
         const val ANIMATION_DELAY = 150L
         const val DISMISS_ANIMATION_DURATION = 300L
         private const val SCALE_START = 0f

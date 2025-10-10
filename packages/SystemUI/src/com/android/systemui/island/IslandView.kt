@@ -83,7 +83,7 @@ class IslandView : ExtendedFloatingActionButton {
     companion object {
         private const val TAG = "IslandView"
         private const val PROP_COMPACT_HUN_ALWAYS_SHOW = "persist.sys.compact_heads_up_notification.always_show"
-        private const val ANIMATION_DURATION = 600L
+        private const val ANIMATION_DURATION = 500L
         private const val ANIMATION_DELAY = 150L
         private const val DISMISS_ANIMATION_DURATION = 300L
         private const val MAX_TEXT_LENGTH = 28
