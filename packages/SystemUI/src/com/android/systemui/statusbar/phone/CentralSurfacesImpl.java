@@ -38,7 +38,6 @@ import static com.android.systemui.Flags.relockWithPowerButtonImmediately;
 import static com.android.systemui.Flags.statusBarSignalPolicyRefactor;
 import static com.android.systemui.charging.WirelessChargingAnimation.UNKNOWN_BATTERY_LEVEL;
 import static com.android.systemui.flags.Flags.SHORTCUT_LIST_SEARCH_LAYOUT;
-import static com.android.systemui.shared.Flags.ambientAod;
 import static com.android.systemui.statusbar.StatusBarState.SHADE;
 
 import android.annotation.Nullable;
@@ -109,6 +108,7 @@ import com.android.internal.logging.UiEventLoggerImpl;
 import com.android.internal.logging.nano.MetricsProto.MetricsEvent;
 import com.android.internal.statusbar.IStatusBarService;
 import com.android.internal.statusbar.RegisterStatusBarResult;
+import com.android.internal.util.witaqua.Utils;
 import com.android.keyguard.AuthKeyguardMessageArea;
 import com.android.keyguard.KeyguardUpdateMonitor;
 import com.android.keyguard.KeyguardUpdateMonitorCallback;
@@ -1038,7 +1038,7 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces,
 
             @Override
             public void onKeyguardGoingAwayChanged() {
-                if (ambientAod()) {
+                if (Utils.ambientAod()) {
                     // This code path is not used if the KeyguardTransitionRepository is managing
                     // the lightreveal scrim.
                     return;
@@ -2641,7 +2641,7 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces,
             return;
         }
 
-        if (ambientAod()) {
+        if (Utils.ambientAod()) {
             return;
         }
 
@@ -3313,7 +3313,7 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces,
 
                 @Override
                 public void onDozeAmountChanged(float linear, float eased) {
-                    if (!ambientAod()
+                    if (!Utils.ambientAod()
                             && !(mLightRevealScrim.getRevealEffect() instanceof CircleReveal)) {
                         // If wakeAndUnlocking, this is handled in AuthRippleInteractor
                         if (!mBiometricUnlockController.isWakeAndUnlock()) {
