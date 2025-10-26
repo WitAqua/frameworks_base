@@ -124,7 +124,7 @@ public class PowerShareTile extends QSTileImpl<BooleanState>
         if (mBatteryController.isPowerSave()) {
             try {
                 mPowerShare.setEnabled(false);
-            } catch (RemoteException | ServiceSpecificException ex) {
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
@@ -135,14 +135,20 @@ public class PowerShareTile extends QSTileImpl<BooleanState>
             } else {
                 mNotificationManager.cancel(NOTIFICATION_ID);
             }
-        } catch (RemoteException | ServiceSpecificException ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
     @Override
     public boolean isAvailable() {
-        return mPowerShare != null;
+        try {
+            // Will throw NPE or some other exception if HAL is either missing or broken.
+            mPowerShare.isEnabled();
+            return true;
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
     @Override
@@ -157,7 +163,7 @@ public class PowerShareTile extends QSTileImpl<BooleanState>
         try {
             mPowerShare.setEnabled(!mPowerShare.isEnabled());
             refreshState();
-        } catch (RemoteException | ServiceSpecificException ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
@@ -190,7 +196,7 @@ public class PowerShareTile extends QSTileImpl<BooleanState>
         state.hasLongClickEffect = false;
         try {
             state.value = mPowerShare.isEnabled();
-        } catch (RemoteException | ServiceSpecificException ex) {
+        } catch (Exception ex) {
             state.value = false;
             ex.printStackTrace();
         }
@@ -229,7 +235,7 @@ public class PowerShareTile extends QSTileImpl<BooleanState>
     private int getMinBatteryLevel() {
         try {
             return mPowerShare.getMinBattery();
-        } catch (RemoteException | ServiceSpecificException ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
         }
 

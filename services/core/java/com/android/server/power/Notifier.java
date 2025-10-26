@@ -1138,6 +1138,7 @@ public class Notifier {
                     wireless ? Settings.Global.WIRELESS_CHARGING_STARTED_SOUND
                             : Settings.Global.CHARGING_STARTED_SOUND);
             if ("silent".equals(soundPath)) {
+                mIsPlayingChargingStartedFeedback.set(false);
                 return;
             }
 
