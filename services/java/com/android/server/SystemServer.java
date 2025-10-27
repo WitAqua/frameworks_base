@@ -321,6 +321,7 @@ import com.android.server.wallpapereffectsgeneration.WallpaperEffectsGenerationM
 import com.android.server.wearable.WearableSensingManagerService;
 import com.android.server.webkit.WebViewUpdateService;
 import com.android.server.witaqua.AttestationService;
+import com.android.server.witaqua.VbmetaHashService;
 import com.android.server.wm.ActivityTaskManagerService;
 import com.android.server.wm.WindowManagerGlobalLock;
 import com.android.server.wm.WindowManagerService;
@@ -2891,6 +2892,11 @@ public final class SystemServer implements Dumpable {
             // AttestationService
             t.traceBegin("AttestationService");
             mSystemServiceManager.startService(AttestationService.class);
+            t.traceEnd();
+
+            // VbmetaHashService
+            t.traceBegin("VbmetaHashService");
+            mSystemServiceManager.startService(VbmetaHashService.class);
             t.traceEnd();
         }
 
