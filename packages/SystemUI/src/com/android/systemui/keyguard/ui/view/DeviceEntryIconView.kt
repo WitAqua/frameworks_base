@@ -17,6 +17,10 @@
 package com.android.systemui.keyguard.ui.view
 
 import android.content.Context
+import android.graphics.RenderEffect
+import android.graphics.Shader
+import android.graphics.BlendMode
+import android.graphics.Bitmap
 import android.graphics.drawable.AnimatedStateListDrawable
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.util.AttributeSet
@@ -259,6 +263,23 @@ constructor(
         lp.width = ViewGroup.LayoutParams.MATCH_PARENT
         bgView.layoutParams = lp
         bgView.alpha = 0f
+
+        bgView.post {
+            val width = bgView.width
+            val height = bgView.height
+            if (width > 0 && height > 0) {
+                val drawable = bgView.drawable
+                val bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+                val canvas = android.graphics.Canvas(bitmap)
+                drawable.setBounds(0, 0, width, height)
+                drawable.draw(canvas)
+
+                val blur = RenderEffect.createBlurEffect(25f, 25f, Shader.TileMode.CLAMP)
+                val bitmapEffect = RenderEffect.createBitmapEffect(bitmap)
+                val blended = RenderEffect.createBlendModeEffect(blur, bitmapEffect, BlendMode.SRC_IN)
+                bgView.setRenderEffect(blended)
+            }
+        }
     }
 
     fun getIconState(icon: IconType, aod: Boolean): IntArray {

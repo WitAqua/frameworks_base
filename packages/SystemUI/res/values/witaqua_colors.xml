@@ -17,5 +17,5 @@
 <resources>
 
     <!-- Color of background circle of keyguard button -->
-    <color name="keyguard_button_bg_color">#B3FFFFFF</color>
+    <color name="keyguard_button_bg_color">#FFFFFFFF</color>
 </resources>
