@@ -190,7 +190,7 @@ public class FingerprintEnrollClient extends EnrollClient<AidlSession> implement
                 vibrateSuccess();
             }
             mSensorOverlays.ifUdfps(
-                    controller -> controller.onAcquired(getSensorId(), acquiredInfo, vendorCode));
+                    controller -> controller.onAcquired(getSensorId(), acquiredInfo));
         }
 
         mSensorOverlays.ifUdfps(controller -> {
