@@ -20,12 +20,15 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.database.ContentObserver
 import android.icu.text.DateFormat
 import android.icu.text.DisplayContext
 import android.icu.util.Calendar
 import android.os.Handler
 import android.os.HandlerExecutor
+import android.os.Looper
 import android.os.UserHandle
+import android.provider.Settings
 import android.text.TextUtils
 import android.util.Log
 import android.view.View.MeasureSpec
@@ -38,6 +41,7 @@ import com.android.systemui.lifecycle.repeatWhenAttached
 import com.android.systemui.shade.ShadeLogger
 import com.android.systemui.shade.domain.interactor.ShadeInteractor
 import com.android.systemui.util.ViewController
+import com.android.systemui.util.time.ChineseLunarCalendarUtil
 import com.android.systemui.util.time.SystemClock
 import java.text.FieldPosition
 import java.text.ParsePosition
@@ -106,6 +110,18 @@ class VariableDateViewController(
     private var lastWidth = Integer.MAX_VALUE
     private var lastText = ""
     private var currentTime = Date()
+    private val contentResolver = view.context.contentResolver
+    private var showLunarCalendar = isLunarCalendarEnabled()
+    private val lunarCalendarSettingUri =
+        Settings.System.getUriFor(Settings.System.QS_SHOW_LUNAR_CALENDAR)
+    private val settingsObserver =
+        object : ContentObserver(Handler(Looper.getMainLooper())) {
+            override fun onChange(selfChange: Boolean, uri: android.net.Uri?) {
+                if (uri == null || uri == lunarCalendarSettingUri) {
+                    updateShowLunarCalendar()
+                }
+            }
+        }
 
     // View class easy accessors
     private val longerPattern: String
@@ -177,6 +193,13 @@ class VariableDateViewController(
 
         broadcastDispatcher.registerReceiver(intentReceiver, filter,
                 HandlerExecutor(timeTickHandler), UserHandle.SYSTEM)
+        contentResolver.registerContentObserver(
+            lunarCalendarSettingUri,
+            false,
+            settingsObserver,
+            UserHandle.USER_CURRENT
+        )
+        updateShowLunarCalendar()
         mView.repeatWhenAttached {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 shadeInteractor.qsExpansion.collect(::onQsExpansionFractionChanged)
@@ -190,6 +213,7 @@ class VariableDateViewController(
         dateFormat = null
         mView.onAttach(null)
         broadcastDispatcher.unregisterReceiver(intentReceiver)
+        contentResolver.unregisterContentObserver(settingsObserver)
     }
 
     private fun updateClock() {
@@ -199,7 +223,7 @@ class VariableDateViewController(
 
         currentTime.time = systemClock.currentTimeMillis()
 
-        val text = getTextForFormat(currentTime, dateFormat!!)
+        val text = getDisplayTextForFormat(dateFormat!!)
         if (text != lastText) {
             mView.setText(text)
             lastText = text
@@ -216,14 +240,14 @@ class VariableDateViewController(
         }
         if (DEBUG) Log.d(TAG, "Width changed. Maybe changing pattern")
         // Start with longer pattern and see what fits
-        var text = getTextForFormat(currentTime, getFormatFromPattern(longerPattern))
+        var text = getDisplayTextForFormat(getFormatFromPattern(longerPattern))
         var length = mView.getDesiredWidthForText(text)
         if (length <= availableWidth) {
             changePattern(longerPattern)
             return
         }
 
-        text = getTextForFormat(currentTime, getFormatFromPattern(shorterPattern))
+        text = getDisplayTextForFormat(getFormatFromPattern(shorterPattern))
         length = mView.getDesiredWidthForText(text)
         if (length <= availableWidth) {
             changePattern(shorterPattern)
@@ -237,6 +261,37 @@ class VariableDateViewController(
         if (newPattern.equals(datePattern)) return
         if (DEBUG) Log.d(TAG, "Changing pattern to $newPattern")
         datePattern = newPattern
+    }
+
+    private fun getDisplayTextForFormat(format: DateFormat): String {
+        val baseText = getTextForFormat(currentTime, format)
+        if (!showLunarCalendar) {
+            return baseText
+        }
+        val lunarText = ChineseLunarCalendarUtil.getLunarDateString()
+        if (baseText.isEmpty()) {
+            return lunarText
+        }
+        return "$baseText $lunarText"
+    }
+
+    private fun isLunarCalendarEnabled(): Boolean {
+        return Settings.System.getIntForUser(
+                contentResolver,
+                Settings.System.QS_SHOW_LUNAR_CALENDAR,
+                0,
+                UserHandle.USER_CURRENT) == 1
+    }
+
+    private fun updateShowLunarCalendar() {
+        val enabled = isLunarCalendarEnabled()
+        if (enabled == showLunarCalendar) {
+            return
+        }
+        showLunarCalendar = enabled
+        lastWidth = Integer.MAX_VALUE
+        post(::updateClock)
+        post { mView.requestLayout() }
     }
 
     class Factory @Inject constructor(

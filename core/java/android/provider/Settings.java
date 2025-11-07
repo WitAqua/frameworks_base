@@ -6879,6 +6879,12 @@ public final class Settings {
         public static final String QS_SHOW_BATTERY_PERCENT = "qs_show_battery_percent";
 
         /**
+         * Whether to show Chinese lunar calendar in the quick settings header.
+         * @hide
+         */
+        public static final String QS_SHOW_LUNAR_CALENDAR = "qs_show_lunar_calendar";
+
+        /**
          * Whether to show rotation suggestion
          * @hide
          */

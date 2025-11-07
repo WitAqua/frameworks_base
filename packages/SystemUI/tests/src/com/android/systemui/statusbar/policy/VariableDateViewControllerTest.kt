@@ -89,6 +89,7 @@ class VariableDateViewControllerTest : SysuiTestCase() {
         `when`(view.longerPattern).thenReturn(LONG_PATTERN)
         `when`(view.shorterPattern).thenReturn(SHORT_PATTERN)
         `when`(view.handler).thenReturn(testableHandler)
+        `when`(view.context).thenReturn(mContext)
 
         `when`(view.setText(anyString())).thenAnswer {
             lastText = it.arguments[0] as? String

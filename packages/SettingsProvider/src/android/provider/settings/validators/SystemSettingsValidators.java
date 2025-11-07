@@ -275,5 +275,6 @@ public class SystemSettingsValidators {
         VALIDATORS.put(System.CV_ENABLED,
                 new InclusiveIntegerRangeValidator(0, 1));
         VALIDATORS.put(System.SWIPE_TO_SCREENSHOT, BOOLEAN_VALIDATOR);
+        VALIDATORS.put(System.QS_SHOW_LUNAR_CALENDAR, BOOLEAN_VALIDATOR);
     }
 }
