@@ -273,7 +273,6 @@ import com.android.server.stats.bootstrap.StatsBootstrapAtomService;
 import com.android.server.stats.pull.StatsPullAtomService;
 import com.android.server.statusbar.StatusBarManagerService;
 import com.android.server.storage.DeviceStorageMonitorService;
-import com.android.server.witaqua.AttestationService;
 import com.android.server.supervision.SupervisionService;
 import com.android.server.systemcaptions.SystemCaptionsManagerService;
 import com.android.server.telecom.TelecomLoaderService;
@@ -2806,11 +2805,6 @@ public final class SystemServer implements Dumpable {
 
             t.traceBegin("StartMediaMetricsManager");
             mSystemServiceManager.startService(MediaMetricsManagerService.class);
-            t.traceEnd();
-
-            // AttestationService
-            t.traceBegin("AttestationService");
-            mSystemServiceManager.startService(AttestationService.class);
             t.traceEnd();
 
             if (!com.android.server.flags.Flags.optionalBackgroundInstallControl()
