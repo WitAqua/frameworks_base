@@ -712,8 +712,10 @@ public class NavigationBar extends ViewController<NavigationBarView> implements 
     }
 
     private boolean getShowNavBarIme() {
-        return Settings.Secure.getIntForUser(
-            mContext.getContentResolver(),
+        int navMode = Settings.Secure.getIntForUser(
+                mContext.getContentResolver(), Settings.Secure.NAVIGATION_MODE, 0, UserHandle.USER_CURRENT);
+        return navMode != 0 && Settings.Secure.getIntForUser(
+                mContext.getContentResolver(),
             Settings.Secure.NAVBAR_IME_SPACE, 1,
             UserHandle.USER_CURRENT) == 1;
     }

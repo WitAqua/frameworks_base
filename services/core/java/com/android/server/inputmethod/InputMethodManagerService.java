@@ -1259,7 +1259,9 @@ public final class InputMethodManagerService implements IInputMethodManagerImpl.
                     InputMethodSettingsRepository.put(userId, settings);
 
                     final int profileParentId = userManagerInternal.getProfileParentId(userId);
-                    final boolean showNavBarIme = Settings.Secure.getIntForUser(
+                    final int navMode = Settings.Secure.getIntForUser(
+                            context.getContentResolver(), Settings.Secure.NAVIGATION_MODE, 0, userId);
+                    final boolean showNavBarIme = navMode != 0 && Settings.Secure.getIntForUser(
                         context.getContentResolver(), Settings.Secure.NAVBAR_IME_SPACE, 1, userId) == 1;
                     userData.mImeDrawsNavBar.set(showNavBarIme);
 
@@ -5499,8 +5501,10 @@ public final class InputMethodManagerService implements IInputMethodManagerImpl.
     private void onUpdateResourceOverlay(@UserIdInt int userId) {
         final int profileParentId = mUserManagerInternal.getProfileParentId(userId);
         final var profileUserIds = mUserManagerInternal.getProfileIds(profileParentId, false);
-        final boolean showNavBarIme = Settings.Secure.getIntForUser(
-            mContext.getContentResolver(), Settings.Secure.NAVBAR_IME_SPACE, 1, userId) == 1;
+        final int navMode = Settings.Secure.getIntForUser(
+                mContext.getContentResolver(), Settings.Secure.NAVIGATION_MODE, 0, userId);
+        final boolean showNavBarIme = navMode != 0 && Settings.Secure.getIntForUser(
+                mContext.getContentResolver(), Settings.Secure.NAVBAR_IME_SPACE, 1, userId) == 1;
         final ArrayList<UserData> updatedUsers = new ArrayList<>();
         for (int profileUserId : profileUserIds) {
             final var userData = getUserData(profileUserId);
