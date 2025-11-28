@@ -28,6 +28,8 @@ import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 import android.os.IBinder;
 import android.os.RemoteException;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -68,7 +70,12 @@ public class ToastPresenter {
         View view = LayoutInflater.from(context).inflate(TEXT_TOAST_LAYOUT, null);
         TextView textView = view.findViewById(com.android.internal.R.id.message);
         textView.setText(text);
-        textView.setSelected(true);
+        if(isScrollText(context)){
+            textView.setSelected(true);
+        } else {
+            textView.setSingleLine(false);
+            textView.setMaxLines(2);
+        }
         return view;
     }
 
@@ -83,7 +90,12 @@ public class ToastPresenter {
         View view = LayoutInflater.from(context).inflate(TEXT_TOAST_LAYOUT_WITH_ICON, null);
         TextView textView = view.findViewById(com.android.internal.R.id.message);
         textView.setText(text);
-        textView.setSelected(true);
+        if(isScrollText(context)){
+            textView.setSelected(true);
+        } else {
+            textView.setSingleLine(false);
+            textView.setMaxLines(2);
+        }
         ImageView imageView = view.findViewById(com.android.internal.R.id.icon);
         if (imageView != null) {
             imageView.setImageDrawable(icon);
@@ -361,5 +373,10 @@ public class ToastPresenter {
             Log.w(TAG, "Cannot show toast from " + mPackageName
                     + " on display it was scheduled on.", e);
         }
+    }
+
+    private static boolean isScrollText(Context context){
+        return Settings.System.getIntForUser(context.getContentResolver(),
+                Settings.System.ENABLE_SCROLL_TOAST_TEXT, 1, UserHandle.USER_CURRENT) == 1;
     }
 }

@@ -33,6 +33,7 @@ import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.UserHandle;
+import android.provider.Settings;
 import android.util.IconDrawableFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -176,7 +177,12 @@ public class SystemUIToast implements ToastPlugin.Toast {
         final TextView textView = toastView.findViewById(com.android.systemui.res.R.id.text);
         final ImageView iconView = toastView.findViewById(com.android.systemui.res.R.id.icon);
         textView.setText(mText);
-        textView.setSelected(true);
+        if(isScrollText()){
+            textView.setSelected(true);
+        } else {
+            textView.setSingleLine(false);
+            textView.setMaxLines(2);
+        }
 
         ApplicationInfo appInfo = null;
         try {
@@ -283,5 +289,10 @@ public class SystemUIToast implements ToastPlugin.Toast {
 
     private static boolean hasFlag(int flags, int flag) {
         return (flags & flag) != 0;
+    }
+
+    private boolean isScrollText(){
+        return Settings.System.getIntForUser(mContext.getContentResolver(),
+                Settings.System.ENABLE_SCROLL_TOAST_TEXT, 1, UserHandle.USER_CURRENT) == 1;
     }
 }
