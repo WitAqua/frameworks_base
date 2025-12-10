@@ -1536,6 +1536,12 @@ final class InstallPackageHelper {
         if (!bypassLowTargetSdkBlock && parsedPackage.isTestOnly()) {
             bypassLowTargetSdkBlock = true;
         }
+        // Allow bypass via PM_BYPASS_LOW_TARGET_SDK_BLOCK
+        if (!bypassLowTargetSdkBlock
+                && android.provider.Settings.Global.getInt(mContext.getContentResolver(),
+        android.provider.Settings.Global.PM_BYPASS_LOW_TARGET_SDK_BLOCK, 0) == 1) {
+            bypassLowTargetSdkBlock = true;
+        }
 
         // Enforce the low target sdk install block except when
         // the --bypass-low-target-sdk-block is set for the install

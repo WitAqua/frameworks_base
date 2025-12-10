@@ -20344,6 +20344,12 @@ public final class Settings {
          */
         public static final String PM_DOWNGRADE_ALLOWED = "pm_downgrade_allowed";
 
+        /**
+         * Control whether bypass low target SDK block is allowed.
+         * @hide
+         */
+        public static final String PM_BYPASS_LOW_TARGET_SDK_BLOCK = "pm_bypass_low_target_sdk_block";
+
 	/**
          * Control whether FLAG_SECURE is ignored for all windows.
          * @hide
