@@ -23,12 +23,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingEnd="8dp"
-            android:textColor="?android:attr/textColorPrimary" />
+            android:textColor="@color/settingslib_materialColorPrimary" />
 
         <View
             android:layout_gravity="right|center_vertical|center_horizontal|center|end"
             android:id="@+id/customized_divider"
-            android:background="?android:attr/listDivider"
+            android:background="@color/settingslib_materialColorPrimaryContainer"
             android:layout_width="wrap_content"
             android:layout_height="1dp" />
 
