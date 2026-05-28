@@ -145,7 +145,8 @@ class BackgroundLaunchProcessController {
         }
         // Allow if the caller has an activity in any foreground task, unless it's a pinned window
         // and not a foreground service start.
-        if ((checkConfiguration.checkOtherExemptions || !inPinnedWindow)
+        if ((checkConfiguration.isCheckingForFgsStart || !inPinnedWindow)
+                && checkConfiguration.checkOtherExemptions
                 && hasActivityInVisibleTask && appSwitchState != APP_SWITCH_DISALLOW) {
             return new BalVerdict(BAL_ALLOW_FOREGROUND, /*background*/
                     "process has activity in foreground task");

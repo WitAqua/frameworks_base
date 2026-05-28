@@ -1157,7 +1157,7 @@ public class BackgroundActivityStartController {
                 || isHomeApp(state.mRealCallingUid, state.mRealCallingPackage);
         if (appSwitchAllowedOrFg && state.mRealCallingUidHasVisibleNotPinnedActivity) {
             return new BalVerdict(BAL_ALLOW_VISIBLE_WINDOW,
-                    /*background*/ false, "realCallingUid has visible window");
+                    "realCallingUid has visible non-pinned window");
         }
         if (state.mRealCallingUidHasNonAppVisibleWindow) {
             return new BalVerdict(BAL_ALLOW_NON_APP_VISIBLE_WINDOW,
