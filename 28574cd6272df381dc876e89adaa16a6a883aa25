@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "5c46a26d_15c56d2d",
+        "filename": "core/java/com/android/internal/util/witaqua/KeyboxChainGenerator.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 154,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2026-06-19T16:49:48Z",
+      "side": 1,
+      "message": "tab",
+      "range": {
+        "startLine": 154,
+        "startChar": 0,
+        "endLine": 154,
+        "endChar": 12
+      },
+      "revId": "28574cd6272df381dc876e89adaa16a6a883aa25",
+      "serverId": "5a06c6fe-ecb2-400e-bcbd-78c9ba895894"
+    }
+  ]
+}
