@@ -1,0 +1,27 @@
+{
+  "comments": [
+    {
+      "unresolved": true,
+      "key": {
+        "uuid": "bd160df3_7fa6bc96",
+        "filename": "services/core/java/com/android/server/witaqua/AttestationService.java",
+        "patchSetId": 1
+      },
+      "lineNbr": 48,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2026-06-19T16:46:27Z",
+      "side": 1,
+      "message": "witaquaの方でホストしたいですね",
+      "range": {
+        "startLine": 48,
+        "startChar": 39,
+        "endLine": 48,
+        "endChar": 157
+      },
+      "revId": "504bef47c371da93c056aeaacc322fbdcb1b7db2",
+      "serverId": "5a06c6fe-ecb2-400e-bcbd-78c9ba895894"
+    }
+  ]
+}
