@@ -37,6 +37,7 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed|snap"
             app:toolbarId="@id/action_bar"
             app:maxLines="2"
+            app:expandedTitleGravity="bottom|center_horizontal"
             style="@style/SettingsLibCollapsingToolbarLayoutStyle.Expressive">
 
             <Toolbar
