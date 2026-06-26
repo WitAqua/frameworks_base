@@ -371,6 +371,8 @@ private fun TwoRowsTopAppBar(
     // visible when collapsed.
     val heightOffsetLimit = pinnedHeightPx - maxHeightPx.floatValue
     scrollBehavior?.state?.heightOffsetLimit = heightOffsetLimit
+
+    /*
     if (isSpaExpressiveEnabled) {
         var hasCollapsedInitially by rememberSaveable(heightOffsetLimit) { mutableStateOf(false) }
         LaunchedEffect(heightOffsetLimit) {
@@ -380,6 +382,7 @@ private fun TwoRowsTopAppBar(
             }
         }
     }
+    */
 
     // Obtain the container Color from the TopAppBarColors using the `collapsedFraction`, as the
     // bottom part of this TwoRowsTopAppBar changes color at the same rate the app bar expands or
@@ -489,6 +492,7 @@ private fun TwoRowsTopAppBar(
                 titleTextStyle = titleTextStyle,
                 titleAlpha = bottomTitleAlpha,
                 titleVerticalArrangement = Arrangement.Bottom,
+                titleHorizontalArrangement = Arrangement.Center,
                 titleBottomPadding = titleBottomPaddingPx,
                 hideTitleSemantics = hideBottomRowSemantics,
                 navigationIcon = {},
@@ -536,6 +540,7 @@ private fun TopAppBarLayout(
     titleTextStyle: TextStyle,
     titleAlpha: () -> Float,
     titleVerticalArrangement: Arrangement.Vertical,
+    titleHorizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
     titleBottomPadding: Int,
     hideTitleSemantics: Boolean,
     navigationIcon: @Composable () -> Unit,
@@ -619,9 +624,15 @@ private fun TopAppBarLayout(
                 y = (layoutHeight - navigationIconPlaceable.height) / 2,
             )
 
+            val titleX = if (titleHorizontalArrangement == Arrangement.Center) {
+                (constraints.maxWidth - titlePlaceable.width) / 2
+            } else {
+                max(TopAppBarTitleInset.roundToPx(), navigationIconPlaceable.width)
+            }
+
             // Title
             titlePlaceable.placeRelative(
-                x = max(TopAppBarTitleInset.roundToPx(), navigationIconPlaceable.width),
+                x = titleX,
                 y =
                     when (titleVerticalArrangement) {
                         Arrangement.Center -> (layoutHeight - titlePlaceable.height) / 2
