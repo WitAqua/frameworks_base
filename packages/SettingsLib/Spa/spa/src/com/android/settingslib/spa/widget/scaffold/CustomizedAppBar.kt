@@ -72,6 +72,7 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.isTraversalGroup
@@ -87,6 +88,7 @@ import com.android.settingslib.spa.framework.theme.SettingsDimension
 import com.android.settingslib.spa.framework.theme.SettingsSpace
 import com.android.settingslib.spa.framework.theme.isSpaExpressiveEnabled
 import com.android.settingslib.spa.framework.theme.settingsBackground
+import com.android.settingslib.widget.theme.R
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.roundToInt
@@ -190,8 +192,8 @@ private fun Title(title: String, maxLines: Int = Int.MAX_VALUE, paddingStart: Dp
 private fun topAppBarColors() =
     if (isSpaExpressiveEnabled) {
         TopAppBarColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainer,
-            scrolledContainerColor = MaterialTheme.colorScheme.surfaceContainer,
+            containerColor = colorResource(id = R.color.legacy_settingslib_materialColorSurfaceContainer),
+            scrolledContainerColor = colorResource(id = R.color.legacy_settingslib_materialColorSurfaceContainer),
             navigationIconContentColor = MaterialTheme.colorScheme.onSurface,
             titleContentColor = MaterialTheme.colorScheme.onSurface,
             actionIconContentColor = MaterialTheme.colorScheme.primary,

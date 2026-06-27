@@ -26,6 +26,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
+import com.android.settingslib.widget.theme.R
 
 @Composable
 internal fun materialColorScheme(isDarkTheme: Boolean): ColorScheme {
@@ -50,4 +52,5 @@ val ColorScheme.surfaceTone: Color
 
 /** The overall background color in Settings. */
 val ColorScheme.settingsBackground: Color
-    get() = surfaceContainer
+    @Composable
+    get() = colorResource(id = R.color.legacy_settingslib_materialColorSurfaceContainer)
