@@ -26,6 +26,7 @@ android_library {
     static_libs: [
         "MPAndroidChart",
         "SettingsLibColor",
+        "SettingsLibSettingsTheme",
         "androidx.compose.animation_animation",
         "androidx.compose.foundation_foundation",
         "androidx.compose.material3_material3",
