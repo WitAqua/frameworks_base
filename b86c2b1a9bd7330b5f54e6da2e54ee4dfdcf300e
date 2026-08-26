@@ -1,0 +1,21 @@
+{
+  "comments": [
+    {
+      "unresolved": false,
+      "key": {
+        "uuid": "9dfc7db5_5281eb1e",
+        "filename": "/PATCHSET_LEVEL",
+        "patchSetId": 2
+      },
+      "lineNbr": 0,
+      "author": {
+        "id": 1000009
+      },
+      "writtenOn": "2026-08-26T20:21:59Z",
+      "side": 1,
+      "message": "後で消す",
+      "revId": "b86c2b1a9bd7330b5f54e6da2e54ee4dfdcf300e",
+      "serverId": "5a06c6fe-ecb2-400e-bcbd-78c9ba895894"
+    }
+  ]
+}
