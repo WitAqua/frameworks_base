@@ -16,10 +16,13 @@
 
 package com.android.settingslib.spaprivileged.template.app
 
+import android.content.Intent
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
+import android.content.pm.PackageManager
 import android.text.BidiFormatter
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -54,6 +57,11 @@ class AppInfoProvider(private val packageInfo: PackageInfo) {
             val app = checkNotNull(packageInfo.applicationInfo)
             val title = appRepository.produceLabel(app, isClonedAppPage).value
 
+            val context = LocalContext.current
+            val launchIntent = remember(app.packageName) {
+                context.packageManager.getLaunchIntentForPackage(app.packageName)
+            }
+
             val descriptions = mutableListOf<String>()
             if (app.isInstantApp) {
                 descriptions.add(
@@ -74,6 +82,15 @@ class AppInfoProvider(private val packageInfo: PackageInfo) {
                     Image(
                         painter = rememberDrawablePainter(appRepository.produceIcon(app).value),
                         contentDescription = appRepository.produceIconContentDescription(app).value,
+                        modifier = Modifier
+                            .clickable(
+                                enabled = launchIntent != null,
+                                onClick = {
+                                    if (launchIntent != null) {
+                                        context.startActivity(launchIntent)
+                                    }
+                                },
+                            ),
                     )
                 },
             )
@@ -146,10 +163,25 @@ class AppInfoProvider(private val packageInfo: PackageInfo) {
 @Composable
 internal fun AppIcon(app: ApplicationInfo, size: Dp) {
     val appRepository = rememberAppRepository()
+    val context = LocalContext.current
+
+    val launchIntent = remember(app.packageName) {
+        context.packageManager.getLaunchIntentForPackage(app.packageName)
+    }
+
     Image(
         painter = rememberDrawablePainter(appRepository.produceIcon(app).value),
         contentDescription = appRepository.produceIconContentDescription(app).value,
-        modifier = Modifier.size(size),
+        modifier = Modifier
+            .size(size)
+            .clickable(
+                enabled = launchIntent != null,
+                onClick = {
+                    if (launchIntent != null) {
+                        context.startActivity(launchIntent)
+                    }
+                },
+            ),
     )
 }
 
