@@ -388,7 +388,11 @@ private fun IconButton(
 ) {
     val colors = buttonColorsForModel(model)
     CircleExpandable(
-        color = colors.background,
+        color = Color.Transparent,
+        borderStroke = BorderStroke(
+            width = 1.dp,
+            color = colors.background,
+        ),
         onClick = model.onClick,
         modifier = modifier,
         useModifierBasedImplementation = useModifierBasedExpandable,
