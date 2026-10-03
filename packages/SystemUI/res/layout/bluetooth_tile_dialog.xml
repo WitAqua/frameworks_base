@@ -45,13 +45,12 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="@dimen/bluetooth_dialog_layout_margin"
-        android:paddingEnd="15dp"
-        android:paddingStart="36dp"
         android:ellipsize="end"
         android:gravity="center_vertical|center_horizontal"
         android:maxLines="2"
         android:text="@string/quick_settings_bluetooth_tile_subtitle"
         android:textSize="14sp"
+        android:textColor="@color/materialColorOnSurfaceVariant"
         android:textAppearance="@style/TextAppearance.BluetoothTileDialog"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -114,7 +113,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <Switch
+            <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/bluetooth_toggle"
                 android:layout_width="wrap_content"
                 android:layout_height="68dp"
@@ -122,9 +121,7 @@
                 android:paddingEnd="40dp"
                 android:contentDescription="@string/turn_on_bluetooth"
                 android:switchMinWidth="@dimen/settingslib_switch_track_width"
-                android:theme="@style/MainSwitch.Settingslib"
-                android:thumb="@drawable/settingslib_switch_thumb"
-                android:track="@drawable/settingslib_switch_track"
+                android:theme="@style/Theme.Material3.DynamicColors.DayNight"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/bluetooth_toggle_title"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -155,7 +152,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/bluetooth_toggle_title" />
 
-            <Switch
+            <com.google.android.material.materialswitch.MaterialSwitch
                 android:id="@+id/bluetooth_auto_on_toggle"
                 android:layout_width="wrap_content"
                 android:layout_height="68dp"
@@ -164,9 +161,7 @@
                 android:paddingEnd="40dp"
                 android:contentDescription="@string/turn_on_bluetooth_auto_tomorrow"
                 android:switchMinWidth="@dimen/settingslib_switch_track_width"
-                android:theme="@style/MainSwitch.Settingslib"
-                android:thumb="@drawable/settingslib_switch_thumb"
-                android:track="@drawable/settingslib_switch_track"
+                android:theme="@style/Theme.Material3.DynamicColors.DayNight"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/bluetooth_auto_on_toggle_title"
                 app:layout_constraintTop_toBottomOf="@+id/bluetooth_toggle" />
@@ -191,6 +186,8 @@
                 android:paddingStart="36dp"
                 android:paddingEnd="40dp"
                 android:textSize="14sp"
+                android:fontFamily="@*android:string/config_bodyFontFamily"
+                android:textColor="@color/materialColorOnSurfaceVariant"
                 android:textAppearance="@style/TextAppearance.BluetoothTileDialog"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
