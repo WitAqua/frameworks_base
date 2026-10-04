@@ -25,7 +25,12 @@
 #include "audioplay.h"
 
 #include <string.h>
+#include <unistd.h>
 
+#include <atomic>
+#include <vector>
+
+#include <android-base/properties.h>
 #include <utils/Log.h>
 #include <utils/threads.h>
 
@@ -57,6 +62,22 @@ static SLVolumeItf bqPlayerVolume;
 // pointer and size of the next player buffer to enqueue, and number of remaining buffers
 static const uint8_t* nextBuffer;
 static unsigned nextSize;
+
+// Set by InitAudioThread once the player exists and is playing sSilence.
+static std::atomic<bool> sReady = false;
+// Silence in the format of the player. Playing it brings the output out of standby, so that
+// the beginning of the first clip is not lost while the output starts.
+static std::vector<uint8_t> sSilence;
+static constexpr int SILENCE_MS = 2000;
+
+// playPart() runs on the animation thread before the frames of the part are drawn. The first
+// part with sound is held back there until the engine exists, but never longer than this.
+// The engine needs audioserver and then AudioService, which takes longest on the first boot.
+static constexpr int ENGINE_WAIT_MS = 10000;
+// Allowance for the output stream to start once the engine plays the silence. How long that
+// really takes depends on the audio HAL and amplifier, so this is a best-effort value.
+static constexpr int OUTPUT_START_MS = 400;
+static constexpr char EXIT_PROP_NAME[] = "service.bootanim.exit";
 
 static const uint32_t ID_RIFF = 0x46464952;
 static const uint32_t ID_WAVE = 0x45564157;
@@ -91,7 +112,8 @@ void bqPlayerCallback(SLAndroidSimpleBufferQueueItf bq, void *context) {
 }
 
 bool hasPlayer() {
-    return (engineObject != nullptr && bqPlayerObject != nullptr);
+    return (engineObject != nullptr && bqPlayerObject != nullptr && bqPlayerPlay != nullptr &&
+            bqPlayerBufferQueue != nullptr);
 }
 
 // create the engine and output mix objects
@@ -321,11 +343,28 @@ public:
 
 private:
     virtual bool threadLoop() {
-        if (defaultServiceManager()->checkService(String16("audio")) == nullptr) {
-            ALOGW("Audio service is not ready yet, ignore creating playback engine");
-            return false;
+        // audioserver rejects new tracks until system_server has pushed its permission state
+        // to it, which happens when AudioService starts. Until then nothing would be heard
+        // anyway, as AudioService also sets the stream volumes. So keep retrying.
+        static constexpr int kRetryIntervalMs = 250;
+        const sp<IServiceManager> sm = defaultServiceManager();
+        while (!exitPending()) {
+            // The player is a native AudioTrack, which needs the services hosted by audioserver.
+            if (sm->checkService(String16("media.audio_flinger")) != nullptr &&
+                    sm->checkService(String16("media.audio_policy")) != nullptr) {
+                if (audioplay::create(mExampleAudioData, mExampleAudioLength)) {
+                    if ((*bqPlayerBufferQueue)->Enqueue(bqPlayerBufferQueue, sSilence.data(),
+                                                        sSilence.size()) != SL_RESULT_SUCCESS) {
+                        ALOGW("could not start the output with silence");
+                    }
+                    sReady = true;
+                    break;
+                }
+                // Do not leave a partially created player behind, hasPlayer() would accept it.
+                audioplay::destroy();
+            }
+            usleep(kRetryIntervalMs * 1000);
         }
-        audioplay::create(mExampleAudioData, mExampleAudioLength);
         // Exit immediately
         return false;
     }
@@ -372,15 +411,31 @@ public:
         if (playNumber == 0 && part.audioData && playSoundsAllowed()) {
             ALOGD("playing clip for part%d, size=%d",
                   partNumber, part.audioLength);
-            // Block until the audio engine is finished initializing.
-            if (initAudioThread != nullptr) {
-                initAudioThread->join();
+            // Hold the first sound until the audio engine and the output are up. Give up when
+            // the boot completes in the meantime.
+            if (initAudioThread != nullptr && !mWaited) {
+                mWaited = true;
+                int waitedMs = 0;
+                while (waitedMs < ENGINE_WAIT_MS && !sReady && initAudioThread->isRunning() &&
+                       !android::base::GetBoolProperty(EXIT_PROP_NAME, false)) {
+                    usleep(20 * 1000);
+                    waitedMs += 20;
+                }
+                if (waitedMs > 0 && sReady) {
+                    usleep(OUTPUT_START_MS * 1000);
+                }
             }
-            audioplay::playClip(part.audioData, part.audioLength);
+            if (sReady) {
+                audioplay::playClip(part.audioData, part.audioLength);
+            }
         }
     };
 
     void shutdown() override {
+        if (initAudioThread != nullptr) {
+            initAudioThread->requestExitAndWait();
+        }
+        sReady = false;
         // we've finally played everything we're going to play
         audioplay::setPlaying(false);
         audioplay::destroy();
@@ -388,6 +443,7 @@ public:
 
 private:
     sp<InitAudioThread> initAudioThread = nullptr;
+    bool mWaited = false;
 };
 
 } // namespace
@@ -409,6 +465,13 @@ bool create(const uint8_t* exampleClipBuf, int exampleClipBufSize) {
     if (!createBufferQueueAudioPlayer(chunkFormat)) {
         return false;
     }
+
+    // Silence in the same format. 8-bit PCM is unsigned, its zero level is 0x80.
+    size_t silenceSize = (size_t)chunkFormat->byte_rate * SILENCE_MS / 1000;
+    if (chunkFormat->block_align > 0) {
+        silenceSize -= silenceSize % chunkFormat->block_align;
+    }
+    sSilence.assign(silenceSize, chunkFormat->bits_per_sample == 8 ? 0x80 : 0);
     return true;
 }
 
@@ -431,6 +494,10 @@ bool playClip(const uint8_t* buf, int size) {
         // here we only enqueue one buffer because it is a long clip,
         // but for streaming playback we would typically enqueue at least 2 buffers to start
         SLresult result;
+        // The queue holds a single buffer, which the start-up silence or the clip of a previous
+        // part may still occupy. Stop and clear it, or the new clip would be rejected.
+        audioplay::setPlaying(false);
+        (*bqPlayerBufferQueue)->Clear(bqPlayerBufferQueue);
         result = (*bqPlayerBufferQueue)->Enqueue(bqPlayerBufferQueue, nextBuffer, nextSize);
         if (SL_RESULT_SUCCESS != result) {
             return false;
