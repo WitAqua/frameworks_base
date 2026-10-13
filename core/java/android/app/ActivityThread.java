@@ -7441,7 +7441,10 @@ public final class ActivityThread extends ClientTransactionHandler
             }
         }
 
-        updateVariableFontFamilies(getApplication());
+        final Application app = getApplication();
+        if (app != null) {
+            updateVariableFontFamilies(app);
+        }
     }
 
     /**
@@ -7457,6 +7460,11 @@ public final class ActivityThread extends ClientTransactionHandler
             final Resources res = context.getResources();
             headlineFamily = res.getString(com.android.internal.R.string.config_headlineFontFamily);
             bodyFamily = res.getString(com.android.internal.R.string.config_bodyFontFamily);
+            if (FontController.isDefaultFont(bodyFamily)) {
+                // Keep variable-* as defined so opsz/ROND from fonts_customization.xml survive.
+                headlineFamily = null;
+                bodyFamily = null;
+            }
         }
         Typeface.setVariableFontFamilies(headlineFamily, bodyFamily);
     }
