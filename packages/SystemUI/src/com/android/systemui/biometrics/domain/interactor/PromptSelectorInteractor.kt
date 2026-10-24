@@ -98,6 +98,9 @@ interface PromptSelectorInteractor {
      */
     val credentialKind: Flow<PromptKind>
 
+    /** PromptKind.Pattern grid size */
+    val patternSize: Flow<Byte>
+
     /**
      * If the API caller or the user's personal preferences require explicit confirmation after
      * successful authentication.
@@ -272,6 +275,16 @@ constructor(
             }
         }
 
+    override val patternSize: Flow<Byte> =
+        promptRepository.userId.map { userId ->
+            if (userId != null) {
+                val effectiveUserId = credentialInteractor.getCredentialOwnerOrSelfId(userId)
+                lockPatternUtils.getLockPatternSize(effectiveUserId)
+            } else {
+                LockPatternUtils.PATTERN_SIZE_DEFAULT
+            }
+        }
+
     override val fingerprintSensorType: Flow<FingerprintSensorType> =
         fingerprintPropertyRepository.sensorType
 
@@ -372,7 +385,7 @@ constructor(
                 if (isLandscape) {
                     val paneType =
                         when {
-                            displayStateInteractor.isLargeScreen.value ->
+                            displayStateInteractor.isLargeScreen.value && !modalities.hasUdfps ->
                                 PromptKind.Biometric.PaneType.ONE_PANE_LARGE_SCREEN_LANDSCAPE
                             showBpWithoutIconForCredential ->
                                 PromptKind.Biometric.PaneType.ONE_PANE_NO_SENSOR_LANDSCAPE
