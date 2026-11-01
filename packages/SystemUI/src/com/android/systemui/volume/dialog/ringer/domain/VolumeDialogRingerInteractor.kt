@@ -79,6 +79,10 @@ constructor(
         controller.setRingerMode(ringerMode.value, false)
     }
 
+    fun setRingStreamVolume(level: Int) {
+        controller.setStreamVolume(AudioManager.STREAM_RING, level, false)
+    }
+
     fun scheduleTouchFeedback() {
         controller.scheduleTouchFeedback()
     }
