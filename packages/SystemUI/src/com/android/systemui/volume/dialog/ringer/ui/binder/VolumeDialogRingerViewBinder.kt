@@ -480,6 +480,16 @@ constructor(
         setOnClickListener {
             viewModel.onRingerButtonClicked(buttonViewModel.ringerMode, isSelected)
         }
+        // Long press opens the drawer. The view model vibrates, so skip the view's haptic.
+        isHapticFeedbackEnabled = isOpen || !isSelected
+        if (isSelected && !isOpen) {
+            setOnLongClickListener {
+                viewModel.onRingerButtonLongClicked(buttonViewModel.ringerMode)
+            }
+        } else {
+            setOnLongClickListener(null)
+            isLongClickable = false
+        }
     }
 
     private fun MotionLayout.ensureChildCount(@LayoutRes viewLayoutId: Int, count: Int) {
