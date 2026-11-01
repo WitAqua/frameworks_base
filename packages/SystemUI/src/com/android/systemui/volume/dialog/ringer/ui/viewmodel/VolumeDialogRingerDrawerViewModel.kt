@@ -63,6 +63,12 @@ import kotlinx.coroutines.launch
 
 private const val DRAWER_STATE_ANIMATION_DURATION = 400L
 private const val SHOW_RINGER_TOAST_COUNT = 12
+private val RINGER_MODE_CYCLE =
+    listOf(
+        RingerMode(RINGER_MODE_NORMAL),
+        RingerMode(RINGER_MODE_VIBRATE),
+        RingerMode(RINGER_MODE_SILENT),
+    )
 
 @VolumeDialogScope
 class VolumeDialogRingerDrawerViewModel
@@ -107,6 +113,7 @@ constructor(
             ) { isZenMuted, ringerModel, state, orientation ->
                 level = ringerModel.level
                 levelMax = ringerModel.levelMax
+                lastRingerModel = ringerModel
                 ringerModel.toViewModel(state, isZenMuted, orientation)
             }
             .flowOn(backgroundDispatcher)
@@ -115,6 +122,7 @@ constructor(
     // Level and Maximum level of Ring Stream.
     private var level = -1
     private var levelMax = -1
+    @Volatile private var lastRingerModel: VolumeDialogRingerModel? = null
 
     // Vibration attributes.
     private val sonificiationVibrationAttributes =
@@ -144,6 +152,7 @@ constructor(
         val currentTime = systemClock.currentTimeMillis()
         if (currentTime - lastClickTime < DRAWER_STATE_ANIMATION_DURATION) return
         lastClickTime = currentTime
+        if (cycleRingerModeIfClosed(ringerMode, isSelectedButton)) return
         if (drawerState.value is RingerDrawerState.Open && !isSelectedButton) {
             Events.writeEvent(Events.EVENT_RINGER_TOGGLE, ringerMode.value)
             volumeDialogLogger.onRingerModeChanged(ringerMode)
@@ -168,6 +177,44 @@ constructor(
                     RingerDrawerState.Open(ringerMode)
                 }
             }
+    }
+
+    /** Cycles normal -> vibrate -> silent when the closed ringer button is tapped. */
+    private fun cycleRingerModeIfClosed(
+        currentMode: RingerMode,
+        isSelectedButton: Boolean,
+    ): Boolean {
+        if (drawerState.value is RingerDrawerState.Open || !isSelectedButton) return false
+        val model = lastRingerModel ?: return false
+        val cycle = RINGER_MODE_CYCLE.filter { model.availableModes.contains(it) }
+        if (cycle.isEmpty()) return false
+        val nextMode = cycle[(cycle.indexOf(currentMode) + 1) % cycle.size]
+        if (nextMode.value == RINGER_MODE_NORMAL && model.level == 0) {
+            // Unmute the ring stream so the ringer is audible.
+            ringerInteractor.setRingStreamVolume(1)
+        }
+        Events.writeEvent(Events.EVENT_RINGER_TOGGLE, nextMode.value)
+        volumeDialogLogger.onRingerModeChanged(nextMode)
+        provideTouchFeedback(nextMode)
+        maybeShowToast(nextMode)
+        ringerInteractor.setRingerMode(nextMode)
+        nextMode.toVolumeDialogUiEvent()?.let(uiEventLogger::log)
+        visibilityInteractor.resetDismissTimeout()
+        drawerState.value = RingerDrawerState.Initial
+        return true
+    }
+
+    /** Vibrates once and opens the drawer when the closed ringer button is long pressed. */
+    fun onRingerButtonLongClicked(ringerMode: RingerMode): Boolean {
+        if (drawerState.value is RingerDrawerState.Open) return false
+        lastClickTime = systemClock.currentTimeMillis()
+        vibrator.vibrate(
+            VibrationEffect.get(VibrationEffect.EFFECT_HEAVY_CLICK),
+            sonificiationVibrationAttributes,
+        )
+        visibilityInteractor.resetDismissTimeout()
+        drawerState.value = RingerDrawerState.Open(ringerMode)
+        return true
     }
 
     private fun provideTouchFeedback(ringerMode: RingerMode) {
