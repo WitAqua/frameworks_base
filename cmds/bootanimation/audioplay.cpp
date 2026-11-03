@@ -73,7 +73,7 @@ static constexpr int SILENCE_MS = 2000;
 // playPart() runs on the animation thread before the frames of the part are drawn. The first
 // part with sound is held back there until the engine exists, but never longer than this.
 // The engine needs audioserver and then AudioService, which takes longest on the first boot.
-static constexpr int ENGINE_WAIT_MS = 10000;
+static constexpr int ENGINE_WAIT_MS = 20000;
 // Allowance for the output stream to start once the engine plays the silence. How long that
 // really takes depends on the audio HAL and amplifier, so this is a best-effort value.
 static constexpr int OUTPUT_START_MS = 400;
