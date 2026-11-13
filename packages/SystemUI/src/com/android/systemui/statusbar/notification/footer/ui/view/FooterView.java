@@ -53,6 +53,7 @@ import com.android.systemui.statusbar.notification.stack.ExpandableViewState;
 import com.android.systemui.statusbar.notification.stack.ViewState;
 import com.android.systemui.util.DrawableDumpKt;
 import com.android.systemui.util.DumpUtilsKt;
+import com.android.systemui.witaqua.WitAquaColors;
 
 import java.io.PrintWriter;
 import java.util.function.Consumer;
@@ -317,7 +318,7 @@ public class FooterView extends StackScrollerDecorView {
             if (notificationShadeBlur()) {
                 if (mIsBlurSupported) {
                     Color backgroundColor = Color.valueOf(
-                            SurfaceEffectColors.surfaceEffect1(getContext()));
+                            WitAquaColors.notificationSurface(getContext()));
                     scHigh = ColorUtils.setAlphaComponent(backgroundColor.toArgb(), 0xFF);
                     // Apply alpha on background drawables.
                     int backgroundAlpha = (int) (backgroundColor.alpha() * 0xFF);

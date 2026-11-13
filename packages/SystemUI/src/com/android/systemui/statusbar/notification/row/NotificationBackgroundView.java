@@ -46,6 +46,7 @@ import com.android.systemui.res.R;
 import com.android.systemui.statusbar.notification.shared.NotificationAddXOnHoverToDismiss;
 import com.android.systemui.util.Assert;
 import com.android.systemui.util.DrawableDumpKt;
+import com.android.systemui.witaqua.WitAquaColors;
 
 import java.io.PrintWriter;
 import java.util.Arrays;
@@ -96,7 +97,7 @@ public class NotificationBackgroundView extends View implements Dumpable,
         mDarkColoredStatefulColors = getResources().getColorStateList(
                 R.color.notification_state_color_dark);
         if (notificationRowTransparency()) {
-            mNormalColor = SurfaceEffectColors.surfaceEffect1(getContext());
+            mNormalColor = WitAquaColors.notificationSurface(getContext());
         } else  {
             mNormalColor = mContext.getColor(
                     com.android.internal.R.color.materialColorSurfaceContainerHigh);
