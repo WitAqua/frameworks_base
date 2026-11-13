@@ -46,6 +46,7 @@ import android.content.IntentFilter;
 import android.content.om.FabricatedOverlay;
 import android.content.om.OverlayIdentifier;
 import android.content.pm.UserInfo;
+import android.content.res.ApkAssets;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.content.theming.ThemeStyle;
@@ -63,6 +64,7 @@ import android.util.Log;
 import android.util.Pair;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
+import android.util.TypedValue;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.VisibleForTesting;
@@ -734,10 +736,28 @@ public class ThemeOverlayController implements CoreStartable, Dumpable {
             String prefix = "android:color/system_" + p.first;
 
             overlay.setResourceValue(prefix + "_light", TYPE_INT_COLOR_ARGB8,
-                    p.second.getArgb(mLightColorScheme.getMaterialScheme()), null);
+                    getStaticOverlayColor(prefix + "_light",
+                            p.second.getArgb(mLightColorScheme.getMaterialScheme())), null);
             overlay.setResourceValue(prefix + "_dark", TYPE_INT_COLOR_ARGB8,
-                    p.second.getArgb(mDarkColorScheme.getMaterialScheme()), null);
+                    getStaticOverlayColor(prefix + "_dark",
+                            p.second.getArgb(mDarkColorScheme.getMaterialScheme())), null);
         });
+    }
+
+    private static int getStaticOverlayColor(String name, int fallback) {
+        final Resources res = Resources.getSystem();
+        final TypedValue value = new TypedValue();
+        try {
+            res.getValue(res.getIdentifier(name, null, null), value, true /* resolveRefs */);
+        } catch (Resources.NotFoundException e) {
+            return fallback;
+        }
+        // Java asset cookies are the ApkAssets index + 1.
+        final ApkAssets[] apkAssets = res.getAssets().getApkAssets();
+        final int index = value.assetCookie - 1;
+        return index >= 0 && index < apkAssets.length
+                && apkAssets[index].getAssetPath().endsWith("/overlay/WitAquaTheme.apk")
+                ? value.data : fallback;
     }
 
     /**
