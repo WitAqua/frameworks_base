@@ -4,5 +4,6 @@
      SPDX-License-Identifier: Apache-2.0
 -->
 <resources>
-
+    <!-- Opaque background of notifications and the notification footer buttons -->
+    <color name="witaqua_notification_surface">#FF262A32</color>
 </resources>

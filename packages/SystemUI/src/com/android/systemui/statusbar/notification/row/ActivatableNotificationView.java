@@ -57,6 +57,7 @@ import com.android.systemui.statusbar.notification.shared.NotificationHeadsUpCyc
 import com.android.systemui.statusbar.notification.stack.NotificationStackScrollLayout;
 import com.android.systemui.statusbar.notification.stack.StackStateAnimator;
 import com.android.systemui.util.DumpUtilsKt;
+import com.android.systemui.witaqua.WitAquaColors;
 
 import java.io.PrintWriter;
 import java.util.HashSet;
@@ -154,9 +155,8 @@ public abstract class ActivatableNotificationView extends ExpandableOutlineView 
 
     protected void updateColors() {
         if (notificationRowTransparency()) {
-            mNormalColor = SurfaceEffectColors.surfaceEffect1(getContext());
-            mOpaqueColor = mContext.getColor(
-                    com.android.internal.R.color.materialColorSurfaceContainer);
+            mNormalColor = WitAquaColors.notificationSurface(getContext());
+            mOpaqueColor = WitAquaColors.notificationSurface(getContext());
         } else {
             mNormalColor = mContext.getColor(
                     com.android.internal.R.color.materialColorSurfaceContainerHigh);
