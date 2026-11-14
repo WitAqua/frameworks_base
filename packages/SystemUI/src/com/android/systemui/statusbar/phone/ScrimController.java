@@ -1699,6 +1699,8 @@ public class ScrimController implements ViewTreeObserver.OnPreDrawListener, Dump
 
     private void onThemeChanged() {
         updateThemeColors();
+        // The scrim alphas come from the theme colors too, which may differ between themes.
+        applyState();
         scheduleUpdate();
     }
 
